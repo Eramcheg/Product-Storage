@@ -15,6 +15,8 @@ from PySide6.QtWidgets import *
 from . resources_rc import *
 
 class Ui_MainWindow(object):
+    def on_button_clicked(self):
+        print("HEllo")
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
@@ -699,17 +701,17 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_8.addWidget(self.btn_save)
 
-        self.btn_exit = QPushButton(self.topMenu)
-        self.btn_exit.setObjectName(u"btn_exit")
-        sizePolicy.setHeightForWidth(self.btn_exit.sizePolicy().hasHeightForWidth())
-        self.btn_exit.setSizePolicy(sizePolicy)
-        self.btn_exit.setMinimumSize(QSize(0, 45))
-        self.btn_exit.setFont(font)
-        self.btn_exit.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_exit.setLayoutDirection(Qt.LeftToRight)
-        self.btn_exit.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-x.png);")
+        # self.btn_exit = QPushButton(self.topMenu)
+        # self.btn_exit.setObjectName(u"btn_exit")
+        # sizePolicy.setHeightForWidth(self.btn_exit.sizePolicy().hasHeightForWidth())
+        # self.btn_exit.setSizePolicy(sizePolicy)
+        # self.btn_exit.setMinimumSize(QSize(0, 45))
+        # self.btn_exit.setFont(font)
+        # self.btn_exit.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.btn_exit.setLayoutDirection(Qt.LeftToRight)
+        # self.btn_exit.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-x.png);")
 
-        self.verticalLayout_8.addWidget(self.btn_exit)
+        # self.verticalLayout_8.addWidget(self.btn_exit)
 
 
         self.verticalMenuLayout.addWidget(self.topMenu, 0, Qt.AlignTop)
@@ -1095,11 +1097,12 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.lineEdit, 0, 0, 1, 1)
 
         self.pushButton = QPushButton(self.frame_content_wid_1)
-        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setObjectName(u"pushButton1")
         self.pushButton.setMinimumSize(QSize(150, 30))
         self.pushButton.setFont(font)
         self.pushButton.setCursor(QCursor(Qt.PointingHandCursor))
         self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
         icon4 = QIcon()
         icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
         self.pushButton.setIcon(icon4)
@@ -1135,18 +1138,19 @@ class Ui_MainWindow(object):
         self.verticalLayout_19.setObjectName(u"verticalLayout_19")
         self.gridLayout_2 = QGridLayout()
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.checkBox = QCheckBox(self.row_2)
-        self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setAutoFillBackground(False)
-        self.checkBox.setStyleSheet(u"")
+        # self.checkBox = QCheckBox(self.row_2)
+        # self.checkBox.setObjectName(u"checkBox")
+        # self.checkBox.setAutoFillBackground(False)
+        # self.checkBox.setStyleSheet(u"")
+        #
+        # self.gridLayout_2.addWidget(self.checkBox, 0, 0, 1, 1)
 
-        self.gridLayout_2.addWidget(self.checkBox, 0, 0, 1, 1)
+        # self.radioButton = QRadioButton(self.row_2)
+        # self.radioButton.setObjectName(u"radioButton")
+        # self.radioButton.setStyleSheet(u"")
 
-        self.radioButton = QRadioButton(self.row_2)
-        self.radioButton.setObjectName(u"radioButton")
-        self.radioButton.setStyleSheet(u"")
 
-        self.gridLayout_2.addWidget(self.radioButton, 0, 1, 1, 1)
+        # self.gridLayout_2.addWidget(self.radioButton, 0, 1, 1, 1)
 
         self.verticalSlider = QSlider(self.row_2)
         self.verticalSlider.setObjectName(u"verticalSlider")
@@ -1254,8 +1258,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
         self.horizontalLayout_12.setContentsMargins(0, 0, 0, 0)
         self.tableWidget = QTableWidget(self.row_3)
-        if (self.tableWidget.columnCount() < 4):
-            self.tableWidget.setColumnCount(4)
+        if (self.tableWidget.columnCount() < 5):
+            self.tableWidget.setColumnCount(5)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -1309,6 +1313,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setItem(0, 2, __qtablewidgetitem22)
         __qtablewidgetitem23 = QTableWidgetItem()
         self.tableWidget.setItem(0, 3, __qtablewidgetitem23)
+        __qtablewidgetitem24 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 4, __qtablewidgetitem24)
         self.tableWidget.setObjectName(u"tableWidget")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
@@ -1545,7 +1551,7 @@ class Ui_MainWindow(object):
         self.btn_widgets.setText(QCoreApplication.translate("MainWindow", u"Widgets", None))
         self.btn_new.setText(QCoreApplication.translate("MainWindow", u"New", None))
         self.btn_save.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.btn_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        # self.btn_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
         self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
 #if QT_CONFIG(tooltip)
@@ -1560,7 +1566,7 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zeno Rocha.</span></p>\n"
+# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zeno Rocha.</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-inde"
                         "nt:0; text-indent:0px;\"><span style=\" color:#ffffff;\">MIT License</span></p>\n"
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
@@ -1569,7 +1575,7 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
 "<p align=\"center\" "
                         "style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
-        self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"PyDracula APP - Theme with colors based on Dracula for Python.", None))
+        self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"Westa GmbH Product control", None))
 #if QT_CONFIG(tooltip)
         self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
 #endif // QT_CONFIG(tooltip)
@@ -1588,11 +1594,12 @@ class Ui_MainWindow(object):
         self.closeAppBtn.setText("")
         self.labelBoxBlenderInstalation.setText(QCoreApplication.translate("MainWindow", u"FILE BOX", None))
         self.lineEdit.setText("")
-        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Type here", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Type here product number", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+
         self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Label description", None))
-        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
-        self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
+        # self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        # self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
         self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Test 2", None))
         self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Test 3", None))
@@ -1643,13 +1650,15 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.tableWidget.isSortingEnabled()
         self.tableWidget.setSortingEnabled(False)
         ___qtablewidgetitem20 = self.tableWidget.item(0, 0)
-        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Test", None));
+        ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
         ___qtablewidgetitem21 = self.tableWidget.item(0, 1)
-        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Text", None));
+        ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Have to be", None));
         ___qtablewidgetitem22 = self.tableWidget.item(0, 2)
-        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Cell", None));
+        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Now we have", None));
         ___qtablewidgetitem23 = self.tableWidget.item(0, 3)
-        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Line", None));
+        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
+        ___qtablewidgetitem24 = self.tableWidget.item(0, 4)
+        ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"Diff up to 10", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
         self.label.setText(QCoreApplication.translate("MainWindow", u"NEW PAGE TEST", None))
@@ -1659,4 +1668,5 @@ class Ui_MainWindow(object):
         self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"By: Wanderson M. Pimenta", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"v1.0.3", None))
     # retranslateUi
+
 

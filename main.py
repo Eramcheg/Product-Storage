@@ -22,6 +22,8 @@ import platform
 # ///////////////////////////////////////////////////////////////
 from modules import *
 from widgets import *
+from xls2xlsx import XLS2XLSX
+import openpyxl
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
 # SET AS GLOBAL WIDGETS
@@ -46,7 +48,7 @@ class MainWindow(QMainWindow):
         # APP NAME
         # ///////////////////////////////////////////////////////////////
         title = "PyDracula - Modern GUI"
-        description = "PyDracula APP - Theme with colors based on Dracula for Python."
+        description = "Westa GmbH Product control"
         # APPLY TEXTS
         self.setWindowTitle(title)
         widgets.titleRightInfo.setText(description)
@@ -71,7 +73,7 @@ class MainWindow(QMainWindow):
         widgets.btn_widgets.clicked.connect(self.buttonClick)
         widgets.btn_new.clicked.connect(self.buttonClick)
         widgets.btn_save.clicked.connect(self.buttonClick)
-
+        widgets.pushButton.clicked.connect(self.buttonClick)
         # EXTRA LEFT BOX
         def openCloseLeftBox():
             UIFunctions.toggleLeftBox(self, True)
@@ -134,6 +136,8 @@ class MainWindow(QMainWindow):
 
         if btnName == "btn_save":
             print("Save BTN clicked!")
+        if btnName == "pushButton1":
+            self.OpenExcelFile()
 
         # PRINT BTN NAME
         print(f'Button "{btnName}" pressed!')
@@ -141,6 +145,38 @@ class MainWindow(QMainWindow):
 
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
+
+    def OpenExcelFile(self):
+        # tempdir = filedialog.askopenfilename(initialdir="/", title="Select An Excel File", filetypes=(
+        #     ("excel files", "*.xlsx"), ("old excel files", "*.xls"), ("All files", "*.*")))
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.ExistingFile)
+        dialog.setNameFilter("Excel Files (*.xlsx *.xls)")
+        if dialog.exec() == QDialog.Accepted:
+            tempdir = dialog.selectedFiles()[0]
+            if tempdir[-3:] == "xls":
+                x2x = XLS2XLSX(tempdir)
+                x2x.to_xlsx(tempdir + 'x')
+                tempdir += 'x'
+
+            if len(tempdir) > 0:
+                arr_of_sheets = (openpyxl.load_workbook(tempdir, read_only=True)).sheetnames
+                Table = openpyxl.load_workbook(tempdir)
+                Sheet = Table[arr_of_sheets[0]]
+                a = 0
+                for i in Sheet.iter_rows():
+                    # print(i[0].value)
+                    if(a!=0):
+                        widgets.tableWidget.setItem(a, 0,QTableWidgetItem(str(i[0].value)))
+                        widgets.tableWidget.setItem(a, 1, QTableWidgetItem(str(i[1].value)))
+                        widgets.tableWidget.setItem(a, 2, QTableWidgetItem(str(i[2].value)))
+                        widgets.tableWidget.setItem(a, 3, QTableWidgetItem(str(int(i[1].value)-int(i[2].value))))
+                        widgets.tableWidget.setItem(a, 4, QTableWidgetItem(str(int(round((int(i[1].value)-int(i[2].value))/10 + 0.5))*10)))
+                    a+=1
+
+            # print(filepath)
+
+
     def resizeEvent(self, event):
         # Update Size Grips
         UIFunctions.resize_grips(self)
