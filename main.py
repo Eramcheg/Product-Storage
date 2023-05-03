@@ -33,7 +33,7 @@ widgets = None
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-
+        self.tempaddr = ""#"G:\\FIles\\Products\\Product Test.xlsx"
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
         self.ui = Ui_MainWindow()
@@ -64,7 +64,8 @@ class MainWindow(QMainWindow):
         # QTableWidget PARAMETERS
         # ///////////////////////////////////////////////////////////////
         widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
+        widgets.tableWidget.cellClicked.connect(self.CellClicked)
+        widgets.lineEdit.textChanged.connect(self.search_table)
         # BUTTONS CLICK
         # ///////////////////////////////////////////////////////////////
 
@@ -127,12 +128,14 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.widgets)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+            self.LoadExcel(widgets.tableWidget)
 
         # SHOW NEW PAGE
         if btnName == "btn_new":
             widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
             UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+            self.LoadExcel(widgets.tableWidgetSecond)
 
         if btnName == "btn_save":
             print("Save BTN clicked!")
@@ -146,6 +149,18 @@ class MainWindow(QMainWindow):
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
 
+    def search_table(self, search_text):
+        for row in range(1, widgets.tableWidget.rowCount()):
+            # Get the text in the first column of the row
+            if widgets.tableWidget.item(row, 0) is not None:
+                name = widgets.tableWidget.item(row, 0).text()
+                # name = widgets.tableWidget.item(row, 0).text()
+                # If the search_text is in the name, show the row; otherwise, hide the row
+                if search_text.lower() in name.lower():
+                    widgets.tableWidget.setRowHidden(row, False)
+                else:
+                    widgets.tableWidget.setRowHidden(row, True)
+
     def OpenExcelFile(self):
         # tempdir = filedialog.askopenfilename(initialdir="/", title="Select An Excel File", filetypes=(
         #     ("excel files", "*.xlsx"), ("old excel files", "*.xls"), ("All files", "*.*")))
@@ -153,29 +168,51 @@ class MainWindow(QMainWindow):
         dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setNameFilter("Excel Files (*.xlsx *.xls)")
         if dialog.exec() == QDialog.Accepted:
-            tempdir = dialog.selectedFiles()[0]
-            if tempdir[-3:] == "xls":
-                x2x = XLS2XLSX(tempdir)
-                x2x.to_xlsx(tempdir + 'x')
-                tempdir += 'x'
-
-            if len(tempdir) > 0:
-                arr_of_sheets = (openpyxl.load_workbook(tempdir, read_only=True)).sheetnames
-                Table = openpyxl.load_workbook(tempdir)
+            self.tempaddr = dialog.selectedFiles()[0]
+            if self.tempaddr[-3:] == "xls":
+                x2x = XLS2XLSX(self.tempaddr)
+                x2x.to_xlsx(self.tempaddr + 'x')
+                self.tempaddr += 'x'
+            self.LoadExcel(widgets.tableWidget)
+    def LoadExcel(self, widget):
+            if len(self.tempaddr) > 0:
+                arr_of_sheets = (openpyxl.load_workbook(self.tempaddr, read_only=True)).sheetnames
+                Table = openpyxl.load_workbook(self.tempaddr)
                 Sheet = Table[arr_of_sheets[0]]
                 a = 0
                 for i in Sheet.iter_rows():
                     # print(i[0].value)
                     if(a!=0):
-                        widgets.tableWidget.setItem(a, 0,QTableWidgetItem(str(i[0].value)))
-                        widgets.tableWidget.setItem(a, 1, QTableWidgetItem(str(i[1].value)))
-                        widgets.tableWidget.setItem(a, 2, QTableWidgetItem(str(i[2].value)))
-                        widgets.tableWidget.setItem(a, 3, QTableWidgetItem(str(int(i[1].value)-int(i[2].value))))
-                        widgets.tableWidget.setItem(a, 4, QTableWidgetItem(str(int(round((int(i[1].value)-int(i[2].value))/10 + 0.5))*10)))
+                        color = QColor(0,0,0)
+                        percentage = int(i[2].value)/int(i[1].value) * 100
+                        if percentage < 50 :
+                            color= QColor(255, 0, 0)
+                        elif 50<=percentage<= 80 :
+                            color = QColor(255, 127, 0)
+                        elif 80<percentage<= 100:
+                            color = QColor(0,  255, 0)
+                        for j in range(3):
+                            item = QTableWidgetItem(str(i[j].value))
+                            item.setForeground(color)
+                            widget.setItem(a, j, item)
+
+                        item4 = QTableWidgetItem(str(int(i[1].value)-int(i[2].value)))
+                        item4.setForeground(color)
+                        widget.setItem(a, 3, item4)
+
+                        item5 = QTableWidgetItem(str(int(round((int(i[1].value)-int(i[2].value))/10 + 0.5))*10))
+                        item5.setForeground(color)
+                        widget.setItem(a, 4, item5)
+
+
                     a+=1
 
             # print(filepath)
 
+    def CellClicked(self, row, column):
+        item = widgets.tableWidget.item(row, column)
+        if item is not None:
+            widgets.plainTextEdit.setPlainText(item.text())
 
     def resizeEvent(self, event):
         # Update Size Grips
