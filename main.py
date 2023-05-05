@@ -24,6 +24,7 @@ from modules import *
 from widgets import *
 from xls2xlsx import XLS2XLSX
 import openpyxl
+from PySide6 import QtWidgets, QtCore
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
 # SET AS GLOBAL WIDGETS
@@ -33,14 +34,18 @@ widgets = None
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.tempaddr = ""#"G:\\FIles\\Products\\Product Test.xlsx"
+        self.tempaddr = "G:\\FIles\\Products\\Product Test.xlsx"
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         global widgets
         widgets = self.ui
-
+        self.keys = []
+        self.values = []
+        self.dictionary = dict()
+        self.firstTable = False
+        self.secondTable = False
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
@@ -60,7 +65,8 @@ class MainWindow(QMainWindow):
         # SET UI DEFINITIONS
         # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
-
+        widgets.toggleLeftBox.clicked.connect(lambda: self.openCloseLeftBox("home"))
+        widgets.extraCloseColumnBtn.clicked.connect(lambda: self.openCloseLeftBox("home"))
         # QTableWidget PARAMETERS
         # ///////////////////////////////////////////////////////////////
         widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -76,10 +82,7 @@ class MainWindow(QMainWindow):
         widgets.btn_save.clicked.connect(self.buttonClick)
         widgets.pushButton.clicked.connect(self.buttonClick)
         # EXTRA LEFT BOX
-        def openCloseLeftBox():
-            UIFunctions.toggleLeftBox(self, True)
-        widgets.toggleLeftBox.clicked.connect(openCloseLeftBox)
-        widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
+
 
         # EXTRA RIGHT BOX
         def openCloseRightBox():
@@ -122,20 +125,27 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.home)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+            self.openCloseLeftBox("home")
 
         # SHOW WIDGETS PAGE
         if btnName == "btn_widgets":
             widgets.stackedWidget.setCurrentWidget(widgets.widgets)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
-            self.LoadExcel(widgets.tableWidget)
+            if self.dictionary == {}:
+                self.LoadExcel(widgets.tableWidget)
+            self.openCloseLeftBox("widgets")
 
         # SHOW NEW PAGE
         if btnName == "btn_new":
             widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
             UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
-            self.LoadExcel(widgets.tableWidgetSecond)
+            # if self.dictionary.keys() == {}:
+            if self.secondTable == False:
+                self.LoadExcel(widgets.tableWidgetSecond)
+                self.secondTable=True
+            self.openCloseLeftBox("new")
 
         if btnName == "btn_save":
             print("Save BTN clicked!")
@@ -148,18 +158,29 @@ class MainWindow(QMainWindow):
 
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
+    def openCloseLeftBox(self, page):
+            UIFunctions.toggleLeftBox(self, True, page)
 
     def search_table(self, search_text):
-        for row in range(1, widgets.tableWidget.rowCount()):
-            # Get the text in the first column of the row
-            if widgets.tableWidget.item(row, 0) is not None:
-                name = widgets.tableWidget.item(row, 0).text()
-                # name = widgets.tableWidget.item(row, 0).text()
-                # If the search_text is in the name, show the row; otherwise, hide the row
-                if search_text.lower() in name.lower():
-                    widgets.tableWidget.setRowHidden(row, False)
-                else:
-                    widgets.tableWidget.setRowHidden(row, True)
+        if search_text in self.dictionary or search_text.lower() in self.dictionary:
+            # self.tableWidget.setRowCount(len(self.dictionary[search_text]))
+                # show only the row that matches the user input key
+                items = widgets.tableWidget.findItems(search_text, QtCore.Qt.MatchExactly)
+                row = items[0].row()
+                print(row)
+                widgets.tableWidget.setCurrentItem(widgets.tableWidget.item(row, 0))
+        else:
+            widgets.tableWidget.setCurrentItem(widgets.tableWidget.item(0, 0))
+        # for row in range(1, widgets.tableWidget.rowCount()):
+        #     # Get the text in the first column of the row
+        #     if widgets.tableWidget.item(row, 0) is not None:
+        #         name = widgets.tableWidget.item(row, 0).text()
+        #         # name = widgets.tableWidget.item(row, 0).text()
+        #         # If the search_text is in the name, show the row; otherwise, hide the row
+        #         if search_text.lower() in name.lower():
+        #             widgets.tableWidget.setRowHidden(row, False)
+        #         else:
+        #             widgets.tableWidget.setRowHidden(row, True)
 
     def OpenExcelFile(self):
         # tempdir = filedialog.askopenfilename(initialdir="/", title="Select An Excel File", filetypes=(
@@ -173,6 +194,7 @@ class MainWindow(QMainWindow):
                 x2x = XLS2XLSX(self.tempaddr)
                 x2x.to_xlsx(self.tempaddr + 'x')
                 self.tempaddr += 'x'
+            self.secondTable=False
             self.LoadExcel(widgets.tableWidget)
     def LoadExcel(self, widget):
             if len(self.tempaddr) > 0:
@@ -192,10 +214,13 @@ class MainWindow(QMainWindow):
                         elif 80<percentage<= 100:
                             color = QColor(0,  255, 0)
                         for j in range(3):
+
                             item = QTableWidgetItem(str(i[j].value))
                             item.setForeground(color)
                             widget.setItem(a, j, item)
-
+                        # if self.dictionary.keys() == []:
+                        self.keys.append(str(i[0].value))
+                        self.values.append(i[2].value)
                         item4 = QTableWidgetItem(str(int(i[1].value)-int(i[2].value)))
                         item4.setForeground(color)
                         widget.setItem(a, 3, item4)
@@ -206,6 +231,9 @@ class MainWindow(QMainWindow):
 
 
                     a+=1
+                #if self.dictionary.keys() == []:
+                self.dictionary = dict(zip(self.keys,self.values))
+                print(self.dictionary)
 
             # print(filepath)
 

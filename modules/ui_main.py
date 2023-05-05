@@ -18,32 +18,16 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+# from pychartdir import *
 
 
-class PieChart(QWidget):
-    def __init__(self, data, lables, parent=None):
-        super().__init__(parent)
-        labels = ['Apples', 'Bananas', 'Oranges']
-        # Create a matplotlib figure
-        self.figure = Figure()
-
-        # Add a subplot for the pie chart
-        self.axes = self.figure.add_subplot(111)
-
-        # Create a canvas to display the figure
-        self.canvas = FigureCanvas(self.figure)
-
-        # Add the canvas to the layout
-        layout = QVBoxLayout()
-        layout.addWidget(self.canvas)
-        self.setLayout(layout)
-
-        # Plot the data as a pie chart
-        self.axes.pie(data, labels=labels)
-        self.axes.axis('equal')
 class Ui_MainWindow(object):
     def on_button_clicked(self):
         print("HEllo")
+
+
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
@@ -883,6 +867,20 @@ class Ui_MainWindow(object):
         self.verticalLayout_11.addWidget(self.btn_more)
 
 
+        self.btn_export = QPushButton(self.extraTopMenu)
+        self.btn_export.setObjectName(u"btn_export")
+        sizePolicy.setHeightForWidth(self.btn_export.sizePolicy().hasHeightForWidth())
+        self.btn_export.setSizePolicy(sizePolicy)
+        self.btn_export.setMinimumSize(QSize(0, 45))
+        self.btn_export.setFont(font)
+        self.btn_export.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_export.setLayoutDirection(Qt.LeftToRight)
+        self.btn_export.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-expand-right.png);")
+
+        self.verticalLayout_11.addWidget(self.btn_export)
+
+
+
         self.verticalLayout_12.addWidget(self.extraTopMenu, 0, Qt.AlignTop)
 
         self.extraCenter = QFrame(self.extraContent)
@@ -1092,27 +1090,112 @@ class Ui_MainWindow(object):
         self.verticalLayout111.setContentsMargins(10, 10, 10, 10)
         widget = QWidget()
         layout = QVBoxLayout(widget)
-        # MainWindow.setCentralWidget(widget)
 
-        # Create a Matplotlib Figure object
-        fig = plt.Figure(figsize=(5, 5), facecolor=(1.0,1.0,1.0,0.0))
+        # self.series = QPieSeries()
+        # self.series.append('Jane', 1)
+        # self.series.append('Joe', 2)
+        # self.series.append('Andy', 3)
+        # self.series.append('Barbara', 4)
+        # self.series.append('Axel', 5)
+        #
+        # self.slice = self.series.slices()[1]
+        # self.slice.setExploded()
+        # self.slice.setLabelVisible()
+        # self.slice.setPen(QPen(Qt.darkGreen, 2))
+        # self.slice.setBrush(Qt.green)
+        #
+        # self.chart = QChart()
+        # self.chart.addSeries(self.series)
+        # self.chart.setTitle('Simple piechart example')
+        # self.chart.legend().hide()
+        #
+        # self._chart_view = QChartView(self.chart)
+        # self._chart_view.setRenderHint(QPainter.Antialiasing)
 
-        # Create a subplot within the Figure object
+        # fig = Figure(figsize=(5, 5),facecolor=(1.0,1.0,1.0,0.0))
+
+
+        # Add the pie chart to the figure
+        # Add the pie chart to the figure
+        labels = ['Apple', 'Banana', 'Cherry', 'Pumpkin', 'Watermelon']
+        share = [15, 20, 30, 25, 10]
+        explode = (0.1, 0.0, 0.0, 0.0, 0.0)
+        fig = plt.figure()
         ax = fig.add_subplot(111)
+        wedges, texts, autotexts = ax.pie(x=share, explode=explode, labels=labels, autopct='%.2f%%', shadow=True,
+                                          startangle=90)
 
-        # Create the pie chart
-        data = [50, 25, 25]
-        labels = ['A', 'B', 'C']
-        # ax.pie(data, labels=labels, labelcolor='red')
-        wedges, labels = ax.pie(data, labels=labels)
+        def hover(event):
+            global explode
+            if event.inaxes == ax:
+                for wedge in wedges:
+                    if wedge.contains(event)[0]:
+                        wedge_index = wedges.index(wedge)
+                        explode = [0, 0, 0, 0, 0]
+                        explode[wedge_index] = 0.1
+                        ax.pie(share, explode=explode, labels=labels, autopct='%.2f%%', shadow=True, startangle=90)
 
-        # Set the font color of the labels to red
-        for label in labels:
-            label.set_color('white')
-        # Create a FigureCanvas object and add it to the layout
-        # fig.set_facecolor('transparent')
+        # Connect hover function to figure
+        fig.canvas.mpl_connect('motion_notify_event', hover)
+
         canvas = FigureCanvas(fig)
-        layout.addWidget(canvas)
+        # plt.style.use("fivethirtyeight")
+        #
+        # slices = [59219, 55466, 47544, 36443, 35917]
+        # labels = ['JavaScript', 'HTML/CSS', 'SQL', 'Python', 'Java']
+        # explode = [0, 0, 0, 0.1, 0]
+        #
+        # chart = plt.pie(slices, labels=labels, explode=explode, shadow=True,
+        #         startangle=90, autopct='%1.1f%%',
+        #         wedgeprops={'edgecolor': 'black'})
+        # # data = [20,20,20,20,20]
+        # labels = ["Label 1", "Label 2", "Label 3", "Label 4", "Label 5"]
+        #
+        # # Create a 3D pie chart
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111, projection="3d")
+        # colors = ["r", "g", "b", "c", "m"]
+        # startangle = 90
+        # explode = (0.1, 0, 0, 0, 0)
+        #
+        # ax.pie(data,explode=explode,  labels=labels,colors=colors,autopct='%.2f',pctdistance=0.6, shadow=False, labeldistance=1.1, startangle=startangle)
+        #
+        # # Set the chart title and axes labels
+        # ax.set_title("3D Pie Chart")
+        # ax.set_xlabel("X Label")
+        # ax.set_ylabel("Y Label")
+        # ax.set_zlabel("Z Label")
+
+
+        # # Create a pie series and add data
+        # series = QPieSeries()
+        # series.append("Series 1", 20)
+        # series.append("Series 2", 30)
+        # series.append("Series 3", 10)
+        #
+        # # Create a chart and set the series
+        # chart = QChart()
+        # chart.addSeries(series)
+        #
+        # # Set the chart title and enable 3D
+        # chart.setTitle("3D Pie Chart")
+        # chart.setTheme(QChart.ChartThemeLight)
+        # chart.setAnimationOptions(QChart.AllAnimations)
+        # chart.setAnimationDuration(1500)
+        # chart.setMargins(QMargins(15, 15, 15, 15))
+        # # chart.setShadowQuality(QChart.ShadowQualityHigh)
+        # chart.setAnimationEasingCurve(QEasingCurve.OutBounce)
+        # # chart.setAnimationPauseDuration(500)
+        #
+        # chart.setAnimationOptions(QChart.AllAnimations)
+        #
+        # chart.setAnimationDuration(1500)
+        #
+        # chartView = QChartView(chart)
+        # chartView.setRenderHint(QPainter.Antialiasing)
+        #
+
+        # layout.addWidget(c.makeChart("threedpie.png"))
 
         self.verticalLayout111.addWidget(canvas)
         self.home.setLayout(self.verticalLayout111)
@@ -1419,8 +1502,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        if (self.tableWidget.rowCount() < 16):
-            self.tableWidget.setRowCount(16)
+        if (self.tableWidget.rowCount() < 100):
+            self.tableWidget.setRowCount(100)
 
         __qtablewidgetitem4 = QTableWidgetItem()
         __qtablewidgetitem4.setFont(font4);
@@ -1744,6 +1827,7 @@ class Ui_MainWindow(object):
         self.btn_share.setText(QCoreApplication.translate("MainWindow", u"Share", None))
         self.btn_adjustments.setText(QCoreApplication.translate("MainWindow", u"Adjustments", None))
         self.btn_more.setText(QCoreApplication.translate("MainWindow", u"More", None))
+        self.btn_export.setText(QCoreApplication.translate("MainWindow", u"Export to excel", None))
         self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
