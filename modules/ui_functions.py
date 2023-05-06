@@ -109,20 +109,7 @@ class UIFunctions(MainWindow):
                 if widthRightBox != 0:
                     style = self.ui.settingsTopBtn.styleSheet()
                     self.ui.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
-                extraTopMenuLayout = self.ui.extraTopMenu.layout()
-                for i in range(extraTopMenuLayout.count()):
-                    widget = extraTopMenuLayout.itemAt(i).widget()
-                    if widget.objectName() == 'btn_share':
-                        widget.setVisible(currentPage == 'home' or currentPage == 'widgets')
 
-                    elif widget.objectName() == 'btn_more':
-                        widget.setVisible(currentPage == 'home' or currentPage == 'widgets')
-
-                    elif widget.objectName() == 'btn_adjustments':
-                        widget.setVisible(currentPage == 'home' or currentPage == 'widgets')
-
-                    elif widget.objectName() == 'btn_export':
-                        widget.setVisible(currentPage == 'new')
             else:
                 widthExtended = standard
                 # RESET BTN

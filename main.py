@@ -24,6 +24,8 @@ from modules import *
 from widgets import *
 from xls2xlsx import XLS2XLSX
 import openpyxl
+from openpyxl.styles import PatternFill, Color
+
 from PySide6 import QtWidgets, QtCore
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
@@ -46,6 +48,7 @@ class MainWindow(QMainWindow):
         self.dictionary = dict()
         self.firstTable = False
         self.secondTable = False
+        self.current_page = ""
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
@@ -65,8 +68,8 @@ class MainWindow(QMainWindow):
         # SET UI DEFINITIONS
         # ///////////////////////////////////////////////////////////////
         UIFunctions.uiDefinitions(self)
-        widgets.toggleLeftBox.clicked.connect(lambda: self.openCloseLeftBox("home"))
-        widgets.extraCloseColumnBtn.clicked.connect(lambda: self.openCloseLeftBox("home"))
+        widgets.toggleLeftBox.clicked.connect(lambda: self.openCloseLeftBox(self.current_page))
+        widgets.extraCloseColumnBtn.clicked.connect(lambda: self.openCloseLeftBox(self.current_page))
         # QTableWidget PARAMETERS
         # ///////////////////////////////////////////////////////////////
         widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -81,6 +84,7 @@ class MainWindow(QMainWindow):
         widgets.btn_new.clicked.connect(self.buttonClick)
         widgets.btn_save.clicked.connect(self.buttonClick)
         widgets.pushButton.clicked.connect(self.buttonClick)
+        widgets.btn_export.clicked.connect(self.buttonClick)
         # EXTRA LEFT BOX
 
 
@@ -125,16 +129,19 @@ class MainWindow(QMainWindow):
             widgets.stackedWidget.setCurrentWidget(widgets.home)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
-            self.openCloseLeftBox("home")
+            self.current_page = "home"
+            self.Must_have()
 
         # SHOW WIDGETS PAGE
         if btnName == "btn_widgets":
             widgets.stackedWidget.setCurrentWidget(widgets.widgets)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
-            if self.dictionary == {}:
+            if self.dictionary == {} or self.firstTable==False:
                 self.LoadExcel(widgets.tableWidget)
-            self.openCloseLeftBox("widgets")
+                self.firstTable = True
+            self.current_page = "widgets"
+            self.Must_have()
 
         # SHOW NEW PAGE
         if btnName == "btn_new":
@@ -145,21 +152,38 @@ class MainWindow(QMainWindow):
             if self.secondTable == False:
                 self.LoadExcel(widgets.tableWidgetSecond)
                 self.secondTable=True
-            self.openCloseLeftBox("new")
+            self.current_page = "new"
+            self.Must_have()
 
         if btnName == "btn_save":
             print("Save BTN clicked!")
         if btnName == "pushButton1":
             self.OpenExcelFile()
-
+        if btnName == "btn_export":
+            self.Export_Rows()
         # PRINT BTN NAME
         print(f'Button "{btnName}" pressed!')
 
+    def Must_have(self):
+        extraTopMenuLayout = self.ui.extraTopMenu.layout()
+        for i in range(extraTopMenuLayout.count()):
+            widget = extraTopMenuLayout.itemAt(i).widget()
+            if widget.objectName() == 'btn_share':
+                widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
+                # widget.setVisible(currentPage == 'widgets')
+            elif widget.objectName() == 'btn_more':
+                widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
 
+            elif widget.objectName() == 'btn_adjustments':
+                widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
+
+            elif widget.objectName() == 'btn_export':
+                widget.setVisible(self.current_page == 'new')
     # RESIZE EVENTS
     # ///////////////////////////////////////////////////////////////
     def openCloseLeftBox(self, page):
             UIFunctions.toggleLeftBox(self, True, page)
+            print(page)
 
     def search_table(self, search_text):
         if search_text in self.dictionary or search_text.lower() in self.dictionary:
@@ -171,16 +195,6 @@ class MainWindow(QMainWindow):
                 widgets.tableWidget.setCurrentItem(widgets.tableWidget.item(row, 0))
         else:
             widgets.tableWidget.setCurrentItem(widgets.tableWidget.item(0, 0))
-        # for row in range(1, widgets.tableWidget.rowCount()):
-        #     # Get the text in the first column of the row
-        #     if widgets.tableWidget.item(row, 0) is not None:
-        #         name = widgets.tableWidget.item(row, 0).text()
-        #         # name = widgets.tableWidget.item(row, 0).text()
-        #         # If the search_text is in the name, show the row; otherwise, hide the row
-        #         if search_text.lower() in name.lower():
-        #             widgets.tableWidget.setRowHidden(row, False)
-        #         else:
-        #             widgets.tableWidget.setRowHidden(row, True)
 
     def OpenExcelFile(self):
         # tempdir = filedialog.askopenfilename(initialdir="/", title="Select An Excel File", filetypes=(
@@ -233,10 +247,66 @@ class MainWindow(QMainWindow):
                     a+=1
                 #if self.dictionary.keys() == []:
                 self.dictionary = dict(zip(self.keys,self.values))
-                print(self.dictionary)
+                # print(self.dictionary)
 
             # print(filepath)
+    def Export_Rows(self):
+        selectionModel = widgets.tableWidgetSecond.selectionModel()
+        selectedRanges = selectionModel.selectedRows()
 
+        # Create a new workbook
+        wb = openpyxl.Workbook()
+
+        # Add a new worksheet
+        ws = wb.active
+        h = ["111", "222","333", "444", "555"]
+        # ws.append(h)
+        # Export the selected rows to Excel
+        realrow = 1
+        for r in selectedRanges:
+            # print(type(r))
+
+            rowValues = []
+            for c in range(widgets.tableWidgetSecond.columnCount()):
+                item = widgets.tableWidgetSecond.item(r.row(), c)
+                cellValue = item.text()
+                cellForeground = item.foreground()
+                # if cellValue =='Number':
+                #     break
+                if str(hex(cellForeground.color().red())).upper()[2:] == "0":
+                    red = "00"
+                else:
+                    red = str(hex(cellForeground.color().red())).upper()[2:]
+                if str(hex(cellForeground.color().blue())).upper()[2:] == "0":
+                    blue = "00"
+                else:
+                     blue = str(hex(cellForeground.color().blue())).upper()[2:]
+                if str(hex(cellForeground.color().green())).upper()[2:] == "0":
+                    green = "00"
+                else:
+                    green = str(hex(cellForeground.color().green())).upper()[2:]
+                # print(red + green + blue)
+                color = red + green + blue
+                if color == "000000":
+                    color = "538DD5"
+                print(color)
+                fill = PatternFill(patternType='solid', fgColor=Color(color))
+
+                ws.cell(row=r.row() + 1, column=c + 1).fill = fill
+                ws.cell(row=r.row() + 1, column=c + 1).value = cellValue
+                rowValues.append(cellValue)
+            if r.row() == 1:
+                continue
+            # ws.append(rowValues)
+            realrow += 1
+
+
+
+        # Save the workbook
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save Excel file", "", "Excel Files (*.xlsx)", options=options)
+        if fileName:
+            wb.save(fileName)
     def CellClicked(self, row, column):
         item = widgets.tableWidget.item(row, column)
         if item is not None:
