@@ -1437,8 +1437,8 @@ class Ui_MainWindow(object):
         self.tableWidgetSecond.setHorizontalHeaderItem(2, __qsecondtablewidgetitem2)
         __qsecondtablewidgetitem3 = QTableWidgetItem()
         self.tableWidgetSecond.setHorizontalHeaderItem(3, __qsecondtablewidgetitem3)
-        if (self.tableWidgetSecond.rowCount() < 16):
-            self.tableWidgetSecond.setRowCount(16)
+        if (self.tableWidgetSecond.rowCount() < 19000):
+            self.tableWidgetSecond.setRowCount(19000)
 
         __qsecondtablewidgetitem4 = QTableWidgetItem()
 
@@ -1659,6 +1659,20 @@ class Ui_MainWindow(object):
         self.label.setAlignment(Qt.AlignCenter)
         self.stackedWidget.addWidget(self.label)
         self.verticalLayout_20.addWidget(self.label)
+
+        self.button_select = QPushButton(self.row_3)
+        self.button_select.setObjectName(u"btn_select")
+        self.button_select.setMinimumSize(QSize(150, 30))
+        self.button_select.setFont(font)
+        self.button_select.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button_select.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        # icon4 = QIcon()
+        # icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
+        # self.pushButton.setIcon(icon4)
+        # self.button.clicked.connect(self.select_all_rows)
+
+        self.verticalLayout_20.addWidget(self.button_select)
         self.verticalLayout_20.addWidget(self.tableWidgetSecond)
         self.stackedWidget.addWidget(self.new_page)
 
@@ -1996,6 +2010,7 @@ class Ui_MainWindow(object):
         # self.label.setText(QCoreApplication.translate("MainWindow", u"NEW PAGE TEST", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
+        self.button_select.setText(QCoreApplication.translate("MainWindow", u"Select all rows", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
         # self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"By: Wanderson M. Pimenta", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"Alpha v0.0.1", None))

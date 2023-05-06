@@ -36,7 +36,7 @@ widgets = None
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.tempaddr = "G:\\FIles\\Products\\Product Test.xlsx"
+        self.tempaddr = ""#"G:\\FIles\\Products\\Product Test.xlsx"
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
         self.ui = Ui_MainWindow()
@@ -48,11 +48,11 @@ class MainWindow(QMainWindow):
         self.dictionary = dict()
         self.firstTable = False
         self.secondTable = False
-        self.current_page = ""
+        self.current_page = "home"
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
-
+        self.Must_have()
         # APP NAME
         # ///////////////////////////////////////////////////////////////
         title = "PyDracula - Modern GUI"
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         # APPLY TEXTS
         self.setWindowTitle(title)
         widgets.titleRightInfo.setText(description)
-
+        self.end_non_empty = -1
         # TOGGLE MENU
         # ///////////////////////////////////////////////////////////////
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
@@ -77,7 +77,8 @@ class MainWindow(QMainWindow):
         widgets.lineEdit.textChanged.connect(self.search_table)
         # BUTTONS CLICK
         # ///////////////////////////////////////////////////////////////
-
+        for i in range(5):
+            widgets.tableWidgetSecond.selectRow(i)
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
@@ -85,6 +86,7 @@ class MainWindow(QMainWindow):
         widgets.btn_save.clicked.connect(self.buttonClick)
         widgets.pushButton.clicked.connect(self.buttonClick)
         widgets.btn_export.clicked.connect(self.buttonClick)
+        widgets.button_select.clicked.connect(self.buttonClick)
         # EXTRA LEFT BOX
 
 
@@ -161,6 +163,9 @@ class MainWindow(QMainWindow):
             self.OpenExcelFile()
         if btnName == "btn_export":
             self.Export_Rows()
+        if btnName == "btn_select":
+            selection_range = widgets.tableWidgetSecond.selectAll()
+            # print(selection_range)
         # PRINT BTN NAME
         print(f'Button "{btnName}" pressed!')
 
@@ -211,7 +216,13 @@ class MainWindow(QMainWindow):
             self.secondTable=False
             self.LoadExcel(widgets.tableWidget)
     def LoadExcel(self, widget):
-            if len(self.tempaddr) > 0:
+        for row in range(widget.rowCount()):
+
+            for column in range(widget.columnCount()):
+                item = widget.item(row, column)
+                if item is not None and row!=0:
+                    item.setText("")
+        if len(self.tempaddr) > 0:
                 arr_of_sheets = (openpyxl.load_workbook(self.tempaddr, read_only=True)).sheetnames
                 Table = openpyxl.load_workbook(self.tempaddr)
                 Sheet = Table[arr_of_sheets[0]]
@@ -247,9 +258,19 @@ class MainWindow(QMainWindow):
                     a+=1
                 #if self.dictionary.keys() == []:
                 self.dictionary = dict(zip(self.keys,self.values))
+                for row in range(widget.rowCount()):
+                    empty = True
+                    for column in range(widget.columnCount()):
+                        item = widget.item(row, column)
+                        if item is not None and not item.text().strip() == '':
+                            empty = False
+                            self.end_non_empty = row
+                            break
+                    widget.setRowHidden(row, empty)
                 # print(self.dictionary)
 
             # print(filepath)
+
     def Export_Rows(self):
         selectionModel = widgets.tableWidgetSecond.selectionModel()
         selectedRanges = selectionModel.selectedRows()
@@ -259,48 +280,59 @@ class MainWindow(QMainWindow):
 
         # Add a new worksheet
         ws = wb.active
-        h = ["111", "222","333", "444", "555"]
+        h = ["Number", "Have to be", "Now we have", "Diff", "Diff up to 10"]
         # ws.append(h)
+
+        # Create a progress dialog
+        progressDialog = QProgressDialog("Exporting rows...", "Cancel", 0, len(selectedRanges), self)
+        progressDialog.setWindowModality(Qt.WindowModal)
+        progressDialog.setValue(0)
+        progressDialog.setWindowTitle("Export")
+        progressDialog.setCancelButton(None)
         # Export the selected rows to Excel
         realrow = 1
-        for r in selectedRanges:
-            # print(type(r))
+        for i, r in enumerate(selectedRanges):
+            # Update the progress dialog
+            progressDialog.setValue(i)
+            if progressDialog.wasCanceled():
+                break
+
+            # Get the items in the row
+            rowItems = [widgets.tableWidgetSecond.item(r.row(), c) for c in
+                        range(widgets.tableWidgetSecond.columnCount())]
 
             rowValues = []
-            for c in range(widgets.tableWidgetSecond.columnCount()):
-                item = widgets.tableWidgetSecond.item(r.row(), c)
+            c=0
+            for item in rowItems:
+                if item is None:
+                    break
                 cellValue = item.text()
                 cellForeground = item.foreground()
                 # if cellValue =='Number':
                 #     break
-                if str(hex(cellForeground.color().red())).upper()[2:] == "0":
-                    red = "00"
-                else:
-                    red = str(hex(cellForeground.color().red())).upper()[2:]
-                if str(hex(cellForeground.color().blue())).upper()[2:] == "0":
-                    blue = "00"
-                else:
-                     blue = str(hex(cellForeground.color().blue())).upper()[2:]
-                if str(hex(cellForeground.color().green())).upper()[2:] == "0":
-                    green = "00"
-                else:
-                    green = str(hex(cellForeground.color().green())).upper()[2:]
-                # print(red + green + blue)
+
+                # Get the color components
+                red = hex(cellForeground.color().red())[2:].upper().zfill(2)
+                blue = hex(cellForeground.color().blue())[2:].upper().zfill(2)
+                green = hex(cellForeground.color().green())[2:].upper().zfill(2)
+
                 color = red + green + blue
                 if color == "000000":
                     color = "538DD5"
-                print(color)
+                # print(color)
                 fill = PatternFill(patternType='solid', fgColor=Color(color))
 
-                ws.cell(row=r.row() + 1, column=c + 1).fill = fill
-                ws.cell(row=r.row() + 1, column=c + 1).value = cellValue
+                ws.cell(row=realrow, column=c + 1).fill = fill
+                ws.cell(row=realrow, column=c + 1).value = cellValue
                 rowValues.append(cellValue)
+                c+=1
             if r.row() == 1:
                 continue
             # ws.append(rowValues)
             realrow += 1
 
-
+        # Close the progress dialog
+        progressDialog.setValue(len(selectedRanges))
 
         # Save the workbook
         options = QFileDialog.Options()
