@@ -10,6 +10,7 @@
 
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import *
 from PySide6.QtCharts import QChart, QChartView, QPieSeries
 
@@ -21,6 +22,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 # from pychartdir import *
+# import plotly.graph_objs as go
+# import plotly.offline as pyo
+import pyqtgraph as pg
+import pyqtgraph.opengl as gl
+
+
+class CustomTableWidget(QTableWidget):
+    def __init__(self, *args, **kwargs):
+        super(CustomTableWidget, self).__init__(*args, **kwargs)
+
+    def sortItems(self, column, order=Qt.AscendingOrder):
+        # Create a list of all rows except the first one
+        rows_data = []
+        for row in range(1, self.rowCount()):
+            row_data = []
+            for col in range(self.columnCount()):
+                if self.item(row, col) is not None:
+                    row_data.append(self.item(row, col).text())
+            rows_data.append(row_data)
+
+        # Sort the rows data based on the specified column
+        rows_data.sort(key=lambda x: x[column], reverse=order == Qt.DescendingOrder)
+
+        # Re-populate the table with the sorted rows
+        for row, row_data in enumerate(rows_data, start=1):
+            for col, item_text in enumerate(row_data):
+
+                self.setItem(row, col, QTableWidgetItem(item_text))
 
 
 class Ui_MainWindow(object):
@@ -84,7 +113,7 @@ class Ui_MainWindow(object):
 "}\n"
 "#topLogo {\n"
 "	background-color: rgb(33, 37, 43);\n"
-"	background-image: url(:/images/images/images/PyDracula.png);\n"
+"	background-image: url(images/images/diamond.png);\n"
 "	background-position: centered;\n"
 "	background-repeat: no-repeat;\n"
 "}\n"
@@ -97,7 +126,7 @@ class Ui_MainWindow(object):
 "    background-repeat: no-repeat;\n"
 "	border: none;\n"
 "	border-left: 22px solid transparent;\n"
-"	background-color: transparent;\n"
+# "	background-color: transparent;\n"
 "	text-align: left;\n"
 "	padding-left: 44px;\n"
 "}\n"
@@ -253,10 +282,10 @@ class Ui_MainWindow(object):
 "	border-bottom: 1px solid rgb(44, 49, 60);\n"
 "}\n"
 "QTableWidget::item{\n"
-"	border-color: rgb(44, 49, 60);\n"
+# "	border-color: rgb(44, 49, 60);\n"
 "	padding-left: 5px;\n"
 "	padding-right: 5px;\n"
-"	gridline-color: rgb(44, 49, 60);\n"
+# "	gridline-color: rgb(44, 49, 60);\n"
 "}\n"
 "QTableWidget::item:selected{\n"
 "	background-color: rgb(189, 147, 249);\n"
@@ -684,7 +713,7 @@ class Ui_MainWindow(object):
         self.btn_widgets.setFont(font)
         self.btn_widgets.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_widgets.setLayoutDirection(Qt.LeftToRight)
-        self.btn_widgets.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-gamepad.png);")
+        self.btn_widgets.setStyleSheet(u"background-image: url(images/icons/cil-catalog.png);")
 
         self.verticalLayout_8.addWidget(self.btn_widgets)
 
@@ -696,33 +725,11 @@ class Ui_MainWindow(object):
         self.btn_new.setFont(font)
         self.btn_new.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_new.setLayoutDirection(Qt.LeftToRight)
-        self.btn_new.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-file.png);")
+        self.btn_new.setStyleSheet(u"background-image: url(images/icons/cil-cells.png);")
 
         self.verticalLayout_8.addWidget(self.btn_new)
 
-        self.btn_save = QPushButton(self.topMenu)
-        self.btn_save.setObjectName(u"btn_save")
-        sizePolicy.setHeightForWidth(self.btn_save.sizePolicy().hasHeightForWidth())
-        self.btn_save.setSizePolicy(sizePolicy)
-        self.btn_save.setMinimumSize(QSize(0, 45))
-        self.btn_save.setFont(font)
-        self.btn_save.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_save.setLayoutDirection(Qt.LeftToRight)
-        self.btn_save.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-save.png)")
 
-        self.verticalLayout_8.addWidget(self.btn_save)
-
-        # self.btn_exit = QPushButton(self.topMenu)
-        # self.btn_exit.setObjectName(u"btn_exit")
-        # sizePolicy.setHeightForWidth(self.btn_exit.sizePolicy().hasHeightForWidth())
-        # self.btn_exit.setSizePolicy(sizePolicy)
-        # self.btn_exit.setMinimumSize(QSize(0, 45))
-        # self.btn_exit.setFont(font)
-        # self.btn_exit.setCursor(QCursor(Qt.PointingHandCursor))
-        # self.btn_exit.setLayoutDirection(Qt.LeftToRight)
-        # self.btn_exit.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-x.png);")
-
-        # self.verticalLayout_8.addWidget(self.btn_exit)
 
 
         self.verticalMenuLayout.addWidget(self.topMenu, 0, Qt.AlignTop)
@@ -867,17 +874,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_11.addWidget(self.btn_more)
 
 
-        self.btn_export = QPushButton(self.extraTopMenu)
-        self.btn_export.setObjectName(u"btn_export")
-        sizePolicy.setHeightForWidth(self.btn_export.sizePolicy().hasHeightForWidth())
-        self.btn_export.setSizePolicy(sizePolicy)
-        self.btn_export.setMinimumSize(QSize(0, 45))
-        self.btn_export.setFont(font)
-        self.btn_export.setCursor(QCursor(Qt.PointingHandCursor))
-        self.btn_export.setLayoutDirection(Qt.LeftToRight)
-        self.btn_export.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-expand-right.png);")
 
-        self.verticalLayout_11.addWidget(self.btn_export)
 
 
 
@@ -1062,28 +1059,7 @@ class Ui_MainWindow(object):
 #         self.home.setStyleSheet(u"background-image: url(:/images/images/images/PyDracula_vertical.png);\n"
 # "background-position: center;\n"
 # "background-repeat: no-repeat;")
-        # Create a figure
-        # self.series = QPieSeries()
-        #
-        # self.series.append('Jane', 1)
-        # self.series.append('Joe', 2)
-        # self.series.append('Andy', 3)
-        # self.series.append('Barbara', 4)
-        # self.series.append('Axel', 5)
-        #
-        # self.slice = self.series.slices()[1]
-        # self.slice.setExploded()
-        # self.slice.setLabelVisible()
-        # self.slice.setPen(QPen(Qt.darkGreen, 2))
-        # self.slice.setBrush(Qt.green)
-        #
-        # self.chart = QChart()
-        # self.chart.addSeries(self.series)
-        # self.chart.setTitle('Simple piechart example')
-        # self.chart.legend().hide()
-        #
-        # self._chart_view = QChartView(self.chart)
-        # self._chart_view.setRenderHint(QPainter.Antialiasing)
+
         self.verticalLayout111 = QVBoxLayout(self.home)
         self.verticalLayout111.setSpacing(10)
         self.verticalLayout111.setObjectName(u"verticalLayout111")
@@ -1091,113 +1067,18 @@ class Ui_MainWindow(object):
         widget = QWidget()
         layout = QVBoxLayout(widget)
 
-        # self.series = QPieSeries()
-        # self.series.append('Jane', 1)
-        # self.series.append('Joe', 2)
-        # self.series.append('Andy', 3)
-        # self.series.append('Barbara', 4)
-        # self.series.append('Axel', 5)
-        #
-        # self.slice = self.series.slices()[1]
-        # self.slice.setExploded()
-        # self.slice.setLabelVisible()
-        # self.slice.setPen(QPen(Qt.darkGreen, 2))
-        # self.slice.setBrush(Qt.green)
-        #
-        # self.chart = QChart()
-        # self.chart.addSeries(self.series)
-        # self.chart.setTitle('Simple piechart example')
-        # self.chart.legend().hide()
-        #
-        # self._chart_view = QChartView(self.chart)
-        # self._chart_view.setRenderHint(QPainter.Antialiasing)
+        self.gl_view_widget = gl.GLViewWidget(self.home)
+        # self.gl_view_widget.setBackgroundColor('white')
 
-        # fig = Figure(figsize=(5, 5),facecolor=(1.0,1.0,1.0,0.0))
+        self.gl_view_widget.setCameraPosition(distance=50)
+
+        data = [30, 20, 50]
 
 
-        # Add the pie chart to the figure
-        # Add the pie chart to the figure
-        labels = ['Apple', 'Banana', 'Cherry', 'Pumpkin', 'Watermelon']
-        share = [15, 20, 30, 25, 10]
-        explode = (0.1, 0.0, 0.0, 0.0, 0.0)
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        wedges, texts, autotexts = ax.pie(x=share, explode=explode, labels=labels, autopct='%.2f%%', shadow=True,
-                                          startangle=90)
-
-        def hover(event):
-            global explode
-            if event.inaxes == ax:
-                for wedge in wedges:
-                    if wedge.contains(event)[0]:
-                        wedge_index = wedges.index(wedge)
-                        explode = [0, 0, 0, 0, 0]
-                        explode[wedge_index] = 0.1
-                        ax.pie(share, explode=explode, labels=labels, autopct='%.2f%%', shadow=True, startangle=90)
-
-        # Connect hover function to figure
-        fig.canvas.mpl_connect('motion_notify_event', hover)
-
-        canvas = FigureCanvas(fig)
-        # plt.style.use("fivethirtyeight")
-        #
-        # slices = [59219, 55466, 47544, 36443, 35917]
-        # labels = ['JavaScript', 'HTML/CSS', 'SQL', 'Python', 'Java']
-        # explode = [0, 0, 0, 0.1, 0]
-        #
-        # chart = plt.pie(slices, labels=labels, explode=explode, shadow=True,
-        #         startangle=90, autopct='%1.1f%%',
-        #         wedgeprops={'edgecolor': 'black'})
-        # # data = [20,20,20,20,20]
-        # labels = ["Label 1", "Label 2", "Label 3", "Label 4", "Label 5"]
-        #
-        # # Create a 3D pie chart
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111, projection="3d")
-        # colors = ["r", "g", "b", "c", "m"]
-        # startangle = 90
-        # explode = (0.1, 0, 0, 0, 0)
-        #
-        # ax.pie(data,explode=explode,  labels=labels,colors=colors,autopct='%.2f',pctdistance=0.6, shadow=False, labeldistance=1.1, startangle=startangle)
-        #
-        # # Set the chart title and axes labels
-        # ax.set_title("3D Pie Chart")
-        # ax.set_xlabel("X Label")
-        # ax.set_ylabel("Y Label")
-        # ax.set_zlabel("Z Label")
 
 
-        # # Create a pie series and add data
-        # series = QPieSeries()
-        # series.append("Series 1", 20)
-        # series.append("Series 2", 30)
-        # series.append("Series 3", 10)
-        #
-        # # Create a chart and set the series
-        # chart = QChart()
-        # chart.addSeries(series)
-        #
-        # # Set the chart title and enable 3D
-        # chart.setTitle("3D Pie Chart")
-        # chart.setTheme(QChart.ChartThemeLight)
-        # chart.setAnimationOptions(QChart.AllAnimations)
-        # chart.setAnimationDuration(1500)
-        # chart.setMargins(QMargins(15, 15, 15, 15))
-        # # chart.setShadowQuality(QChart.ShadowQualityHigh)
-        # chart.setAnimationEasingCurve(QEasingCurve.OutBounce)
-        # # chart.setAnimationPauseDuration(500)
-        #
-        # chart.setAnimationOptions(QChart.AllAnimations)
-        #
-        # chart.setAnimationDuration(1500)
-        #
-        # chartView = QChartView(chart)
-        # chartView.setRenderHint(QPainter.Antialiasing)
-        #
 
-        # layout.addWidget(c.makeChart("threedpie.png"))
-
-        self.verticalLayout111.addWidget(canvas)
+        self.verticalLayout111.addWidget(self.gl_view_widget)
         self.home.setLayout(self.verticalLayout111)
         self.stackedWidget.addWidget(self.home)
         # self.stackedWidget.addWidget(self._chart_view)
@@ -1272,13 +1153,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.pushButton, 0, 1, 1, 1)
 
-        self.labelVersion_3 = QLabel(self.frame_content_wid_1)
-        self.labelVersion_3.setObjectName(u"labelVersion_3")
-        self.labelVersion_3.setStyleSheet(u"color: rgb(113, 126, 149);")
-        self.labelVersion_3.setLineWidth(1)
-        self.labelVersion_3.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.gridLayout.addWidget(self.labelVersion_3, 1, 0, 1, 2)
+        # self.labelVersion_3 = QLabel(self.frame_content_wid_1)
+        # self.labelVersion_3.setObjectName(u"labelVersion_3")
+        # self.labelVersion_3.setStyleSheet(u"color: rgb(113, 126, 149);")
+        # self.labelVersion_3.setLineWidth(1)
+        # self.labelVersion_3.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        #
+        # self.gridLayout.addWidget(self.labelVersion_3, 1, 0, 1, 2)
 
 
         self.horizontalLayout_9.addLayout(self.gridLayout)
@@ -1404,6 +1285,115 @@ class Ui_MainWindow(object):
         # self.horizontalSlider.setOrientation(Qt.Horizontal)
 
         # self.gridLayout_2.addWidget(self.horizontalSlider, 2, 0, 1, 2)
+        self.container1 = QWidget()
+        layout = QHBoxLayout(self.container1)
+        self.label1 = QLabel()
+        self.button1 = QPushButton()
+        self.button2 = QPushButton()
+
+
+        self.button1.setObjectName(u"AscButton1")
+        self.button1.setFixedSize(QSize(30, 30))
+        self.button1.setFont(font)
+        self.button1.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button2.setObjectName(u"DescButton1")
+        self.button2.setFixedSize(QSize(30, 30))
+        self.button2.setFont(font)
+        self.button2.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.button1.setStyleSheet((u"background-image: url(images/icons/cil-desc.png);"))
+        # self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        icon4_1 = QIcon()
+        icon4_1.addFile(u"images/icons/cil-asc.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon4_2 = QIcon()
+        icon4_2.addFile(u"images/icons/cil-desc.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.button1.setIcon(icon4_1)
+        self.button2.setIcon(icon4_2)
+        self.button1.setIconSize(QSize(18, 18))
+        self.button2.setIconSize(QSize(18, 18))
+        self.button1.setFlat(True)
+
+        self.button2.setFlat(True)
+        layout.addWidget(self.label1)
+        layout.addWidget(self.button1)
+        layout.addWidget(self.button2)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.container1.setLayout(layout)
+
+        self.container2 = QWidget()
+        layout = QHBoxLayout(self.container2)
+        self.label2 = QLabel()
+        self.button3 = QPushButton()
+        self.button4 = QPushButton()
+        self.button3.setObjectName(u"AscButton2")
+        self.button3.setFixedSize(QSize(30, 30))
+        self.button3.setFont(font)
+        self.button3.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button4.setObjectName(u"DescButton2")
+        self.button4.setFixedSize(QSize(30, 30))
+        self.button4.setFont(font)
+        self.button4.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        self.button3.setIcon(icon4_1)
+        self.button4.setIcon(icon4_2)
+        self.button3.setIconSize(QSize(18, 18))
+        self.button4.setIconSize(QSize(18, 18))
+        layout.addWidget(self.label2)
+        layout.addWidget(self.button3)
+        layout.addWidget(self.button4)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.container2.setLayout(layout)
+
+        self.container3 = QWidget()
+        layout = QHBoxLayout(self.container3)
+        self.label3 = QLabel()
+        self.button5 = QPushButton()
+        self.button6 = QPushButton()
+        self.button5.setObjectName(u"AscButton3")
+        self.button5.setFixedSize(QSize(30, 30))
+        self.button5.setFont(font)
+        self.button5.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button6.setObjectName(u"DescButton3")
+        self.button6.setFixedSize(QSize(30, 30))
+        self.button6.setFont(font)
+        self.button6.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        self.button5.setIcon(icon4_1)
+        self.button6.setIcon(icon4_2)
+        self.button5.setIconSize(QSize(18, 18))
+        self.button6.setIconSize(QSize(18, 18))
+        layout.addWidget(self.label3)
+        layout.addWidget(self.button5)
+        layout.addWidget(self.button6)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.container3.setLayout(layout)
+
+        self.container4 = QWidget()
+        layout = QHBoxLayout(self.container3)
+        self.label4 = QLabel()
+        self.button7 = QPushButton()
+        self.button8 = QPushButton()
+        self.button7.setObjectName(u"AscButton4")
+        self.button7.setFixedSize(QSize(30, 30))
+        self.button7.setFont(font)
+        self.button7.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button8.setObjectName(u"DescButton4")
+        self.button8.setFixedSize(QSize(30, 30))
+        self.button8.setFont(font)
+        self.button8.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        self.button7.setIcon(icon4_1)
+        self.button8.setIcon(icon4_2)
+        self.button7.setIconSize(QSize(18, 18))
+        self.button8.setIconSize(QSize(18, 18))
+        layout.addWidget(self.label4)
+        layout.addWidget(self.button7)
+        layout.addWidget(self.button8)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.container4.setLayout(layout)
 
 
         self.verticalLayout_19.addLayout(self.gridLayout_2)
@@ -1426,9 +1416,10 @@ class Ui_MainWindow(object):
         font4 = QFont()
         font4.setFamily(u"Segoe UI")
 
-        self.tableWidgetSecond = QTableWidget(self.row_3)
+        self.tableWidgetSecond = CustomTableWidget(self.row_3)
         if (self.tableWidgetSecond.columnCount() < 5):
             self.tableWidgetSecond.setColumnCount(5)
+        # self.tableWidgetSecond.setHorizontalHeaderLabels(CustomHeaderView(self.tableWidgetSecond))
         __qsecondtablewidgetitem = QTableWidgetItem()
         self.tableWidgetSecond.setHorizontalHeaderItem(0, __qsecondtablewidgetitem)
         __qsecondtablewidgetitem1 = QTableWidgetItem()
@@ -1502,8 +1493,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
         __qtablewidgetitem3 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        if (self.tableWidget.rowCount() < 100):
-            self.tableWidget.setRowCount(100)
+        if (self.tableWidget.rowCount() < 10000):
+            self.tableWidget.setRowCount(10000)
 
         __qtablewidgetitem4 = QTableWidgetItem()
         __qtablewidgetitem4.setFont(font4);
@@ -1604,15 +1595,16 @@ class Ui_MainWindow(object):
 #endif
 
         self.tableWidget.setPalette(palette)
+
         self.tableWidget.setFrameShape(QFrame.NoFrame)
         self.tableWidget.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         self.tableWidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        # self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableWidget.setShowGrid(True)
         self.tableWidget.setGridStyle(Qt.SolidLine)
-        self.tableWidget.setSortingEnabled(False)
+        self.tableWidget.setSortingEnabled(True)
         self.tableWidget.horizontalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
         self.tableWidget.horizontalHeader().setDefaultSectionSize(200)
@@ -1621,7 +1613,7 @@ class Ui_MainWindow(object):
         self.tableWidget.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidget.verticalHeader().setHighlightSections(False)
         self.tableWidget.verticalHeader().setStretchLastSection(True)
-
+        self.tableWidget.setRowHeight(0, 50)
 
 
         self.tableWidgetSecond.setPalette(palette)
@@ -1642,7 +1634,14 @@ class Ui_MainWindow(object):
         self.tableWidgetSecond.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidgetSecond.verticalHeader().setHighlightSections(False)
         self.tableWidgetSecond.verticalHeader().setStretchLastSection(True)
-
+        self.button_select = QPushButton(self.row_3)
+        self.button_select.setObjectName(u"btn_select")
+        self.button_select.setMinimumSize(QSize(150, 30))
+        self.button_select.setFont(font)
+        self.button_select.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button_select.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.verticalLayout.addWidget(self.button_select)
+        # self.horizontalLayout_12.addWidget(self.button_select)
         self.horizontalLayout_12.addWidget(self.tableWidget)
 
 
@@ -1660,19 +1659,21 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.label)
         self.verticalLayout_20.addWidget(self.label)
 
-        self.button_select = QPushButton(self.row_3)
-        self.button_select.setObjectName(u"btn_select")
-        self.button_select.setMinimumSize(QSize(150, 30))
-        self.button_select.setFont(font)
-        self.button_select.setCursor(QCursor(Qt.PointingHandCursor))
-        self.button_select.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+
         # self.pushButton.clicked.connect(self.on_button_clicked())
         # icon4 = QIcon()
         # icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
         # self.pushButton.setIcon(icon4)
         # self.button.clicked.connect(self.select_all_rows)
 
-        self.verticalLayout_20.addWidget(self.button_select)
+
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        # icon4 = QIcon()
+        # icon4.addFile(u":/icons/images/icons/cil-folder-open.png", QSize(), QIcon.Normal, QIcon.Off)
+        # self.pushButton.setIcon(icon4)
+        # self.button.clicked.connect(self.select_all_rows)
+
+        # self.verticalLayout_20.addWidget(self.button_select)
         self.verticalLayout_20.addWidget(self.tableWidgetSecond)
         self.stackedWidget.addWidget(self.new_page)
 
@@ -1724,7 +1725,17 @@ class Ui_MainWindow(object):
         self.btn_message.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_message.setLayoutDirection(Qt.LeftToRight)
         self.btn_message.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-envelope-open.png);")
+        self.btn_export = QPushButton(self.topMenus)
+        self.btn_export.setObjectName(u"btn_export")
+        sizePolicy.setHeightForWidth(self.btn_export.sizePolicy().hasHeightForWidth())
+        self.btn_export.setSizePolicy(sizePolicy)
+        self.btn_export.setMinimumSize(QSize(0, 45))
+        self.btn_export.setFont(font)
+        self.btn_export.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_export.setLayoutDirection(Qt.LeftToRight)
+        self.btn_export.setStyleSheet(u"background-image: url(images/icons/cil-excel.png);")
 
+        self.verticalLayout_14.addWidget(self.btn_export)
         self.verticalLayout_14.addWidget(self.btn_message)
 
         self.btn_print = QPushButton(self.topMenus)
@@ -1824,14 +1835,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"PyDracula", None))
-        self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"Modern GUI / Flat Style", None))
+        self.titleLeftApp.setText(QCoreApplication.translate("MainWindow", u"Product control", None))
+        self.titleLeftDescription.setText(QCoreApplication.translate("MainWindow", u"Control logic / Smart view", None))
         self.toggleButton.setText(QCoreApplication.translate("MainWindow", u"Hide", None))
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
-        self.btn_widgets.setText(QCoreApplication.translate("MainWindow", u"Widgets", None))
-        self.btn_new.setText(QCoreApplication.translate("MainWindow", u"New", None))
-        self.btn_save.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        # self.btn_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.btn_widgets.setText(QCoreApplication.translate("MainWindow", u"Catalog", None))
+        self.btn_new.setText(QCoreApplication.translate("MainWindow", u"Stocks", None))
         self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
         self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
 #if QT_CONFIG(tooltip)
@@ -1846,17 +1855,7 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">PyDracula</span></p>\n"
-# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#ffffff;\">An interface created using Python and PySide (support for PyQt), and with colors based on the Dracula theme created by Zeno Rocha.</span></p>\n"
-"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-inde"
-                        # "nt:0; text-indent:0px;\"><span style=\" color:#ffffff;\">MIT License</span></p>\n"
-# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#bd93f9;\">Created by: Wanderson M. Pimenta</span></p>\n"
-# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert UI</span></p>\n"
-# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-uic main.ui &gt; ui_main.py</span></p>\n"
-# "<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; font-weight:600; color:#ff79c6;\">Convert QRC</span></p>\n"
-# "<p align=\"center\" "
-#                         "style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:9pt; color:#ffffff;\">pyside6-rcc resources.qrc -o resources_rc.py</span></p></body></html>", None))
-                                                         ))
+"<p align=\"center\" style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-inde"))
         self.titleRightInfo.setText(QCoreApplication.translate("MainWindow", u"Westa GmbH Product control", None))
 #if QT_CONFIG(tooltip)
         self.settingsTopBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Settings", None))
@@ -1879,7 +1878,7 @@ class Ui_MainWindow(object):
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Type here product number", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Open", None))
 
-        self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Label description", None))
+        # self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Label description", None))
         # self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
         # self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
         # self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
@@ -1930,13 +1929,18 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
 
         __sortingEnabled = self.tableWidget.isSortingEnabled()
-        self.tableWidget.setSortingEnabled(False)
+
+
+        self.tableWidget.setCellWidget(0, 1, self.container1)
+        self.tableWidget.setCellWidget(0, 2, self.container2)
+        self.tableWidget.setCellWidget(0, 3, self.container3)
+        self.tableWidget.setCellWidget(0, 4, self.container4)
         ___qtablewidgetitem20 = self.tableWidget.item(0, 0)
         ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
         ___qtablewidgetitem21 = self.tableWidget.item(0, 1)
         ___qtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Have to be", None));
         ___qtablewidgetitem22 = self.tableWidget.item(0, 2)
-        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Now we have", None));
+        ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Stock", None));
         ___qtablewidgetitem23 = self.tableWidget.item(0, 3)
         ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
         ___qtablewidgetitem24 = self.tableWidget.item(0, 4)
@@ -1996,7 +2000,7 @@ class Ui_MainWindow(object):
         ___qsecondtablewidgetitem21 = self.tableWidgetSecond.item(0, 1)
         ___qsecondtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Have to be", None));
         ___qsecondtablewidgetitem22 = self.tableWidgetSecond.item(0, 2)
-        ___qsecondtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Now we have", None));
+        ___qsecondtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Stock", None));
         ___qsecondtablewidgetitem23 = self.tableWidgetSecond.item(0, 3)
         ___qsecondtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
         ___qsecondtablewidgetitem24 = self.tableWidgetSecond.item(0, 4)
@@ -2005,15 +2009,77 @@ class Ui_MainWindow(object):
 
 
 
-
-
-        # self.label.setText(QCoreApplication.translate("MainWindow", u"NEW PAGE TEST", None))
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.button_select.setText(QCoreApplication.translate("MainWindow", u"Select all rows", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
-        # self.creditsLabel.setText(QCoreApplication.translate("MainWindow", u"By: Wanderson M. Pimenta", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"Alpha v0.0.1", None))
     # retranslateUi
+
+    def create_3d_pie_chart(self, data, colors):
+        num_segments = len(data)
+        angle_step = 2 * np.pi / num_segments
+        radius = 1
+        height = 0.5  # Height of each pie chart segment
+
+        for i in range(num_segments):
+            segment_vertices = []
+
+            angle_start = i * angle_step
+            angle_end = (i + 1) * angle_step
+
+            # Add bottom center vertex
+            segment_vertices.append((0, 0, 0))
+
+            # Add bottom vertices along the arc
+            num_arc_points = 50
+            arc_angles = np.linspace(angle_start, angle_end, num_arc_points)
+            for angle in arc_angles:
+                x = radius * np.cos(angle)
+                y = radius * np.sin(angle)
+                segment_vertices.append((x, y, 0))
+
+            # Add top center vertex
+            segment_vertices.append((0, 0, height))
+
+            # Add top vertices along the arc
+            for angle in arc_angles:
+                x = radius * np.cos(angle)
+                y = radius * np.sin(angle)
+                segment_vertices.append((x, y, height))
+
+            segment_vertices = np.array(segment_vertices, dtype=np.float32)
+
+            # Define faces
+            faces = []
+            for j in range(1, num_arc_points):
+                # Bottom face
+                faces.append([0, j, j + 1])
+                # Side faces
+                faces.append([j, j + num_arc_points + 1, j + num_arc_points])
+                faces.append([j + 1, j + num_arc_points + 1, j])
+                # Top face
+                faces.append([num_arc_points + 1, j + num_arc_points + 2, j + num_arc_points + 1])
+            faces = np.array(faces, dtype=np.uint)
+
+            # Create and add mesh item
+            mesh_data = gl.MeshData(vertexes=segment_vertices, faces=faces)
+            mesh_item = gl.GLMeshItem(
+                meshdata=mesh_data,
+                color=colors[i],
+                smooth=True,
+                # shader='shaded',
+                # glOptions='additive'
+            )
+            # gl_view.addItem(mesh_item)
+    # def create_button_container(self, i, font):
+    #
+    #
+    #
+    #     return container
+
+
+
+
 
 

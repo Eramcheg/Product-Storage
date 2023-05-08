@@ -22,33 +22,50 @@ import platform
 # ///////////////////////////////////////////////////////////////
 from modules import *
 from widgets import *
+import json
 from xls2xlsx import XLS2XLSX
 import openpyxl
 from openpyxl.styles import PatternFill, Color
 
 from PySide6 import QtWidgets, QtCore
+from PySide6.QtCore import Qt
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 
 # SET AS GLOBAL WIDGETS
 # ///////////////////////////////////////////////////////////////
 widgets = None
-
+class NumericItem(QtWidgets.QTableWidgetItem):
+    def __lt__(self, other):
+        return ((self.data(QtCore.Qt.UserRole)) <
+                (other.data(QtCore.Qt.UserRole)))
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.tempaddr = ""#"G:\\FIles\\Products\\Product Test.xlsx"
+
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
+        file = open('variables.json')
+        self.data = json.load(file)
+        print(self.data["file"])
+        self.tempaddr = self.data["file"]  # "G:\\FIles\\Products\\Product Test.xlsx"
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+
         global widgets
         widgets = self.ui
+        for col in range(5):
+            item = widgets.tableWidget.item(0, col)
+            item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         self.keys = []
         self.values = []
+        self.a_number_column = 0
+        self.havetb_column = 2
+        self.stock_column = 3
         self.dictionary = dict()
         self.firstTable = False
         self.secondTable = False
         self.current_page = "home"
+
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
@@ -77,8 +94,6 @@ class MainWindow(QMainWindow):
         widgets.lineEdit.textChanged.connect(self.search_table)
         # BUTTONS CLICK
         # ///////////////////////////////////////////////////////////////
-        for i in range(5):
-            widgets.tableWidgetSecond.selectRow(i)
         # LEFT MENUS
         widgets.btn_home.clicked.connect(self.buttonClick)
         widgets.btn_widgets.clicked.connect(self.buttonClick)
@@ -87,6 +102,14 @@ class MainWindow(QMainWindow):
         widgets.pushButton.clicked.connect(self.buttonClick)
         widgets.btn_export.clicked.connect(self.buttonClick)
         widgets.button_select.clicked.connect(self.buttonClick)
+        widgets.button1.clicked.connect(self.buttonClick)
+        widgets.button2.clicked.connect(self.buttonClick)
+        widgets.button3.clicked.connect(self.buttonClick)
+        widgets.button4.clicked.connect(self.buttonClick)
+        widgets.button5.clicked.connect(self.buttonClick)
+        widgets.button6.clicked.connect(self.buttonClick)
+        widgets.button7.clicked.connect(self.buttonClick)
+        widgets.button8.clicked.connect(self.buttonClick)
         # EXTRA LEFT BOX
 
 
@@ -164,8 +187,13 @@ class MainWindow(QMainWindow):
         if btnName == "btn_export":
             self.Export_Rows()
         if btnName == "btn_select":
-            selection_range = widgets.tableWidgetSecond.selectAll()
-            # print(selection_range)
+            selection_range = widgets.tableWidget.selectAll()
+        if btnName in ["AscButton1","AscButton2","AscButton3","AscButton4"] :
+            self.TableSorting(widgets.tableWidget, 'ASC', int(btnName[-1]))
+        if btnName in ["DescButton1", "DescButton2", "DescButton3", "DescButton4"]:
+            self.TableSorting(widgets.tableWidget, 'DESC', int(btnName[-1]))
+
+
         # PRINT BTN NAME
         print(f'Button "{btnName}" pressed!')
 
@@ -175,24 +203,24 @@ class MainWindow(QMainWindow):
             widget = extraTopMenuLayout.itemAt(i).widget()
             if widget.objectName() == 'btn_share':
                 widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
-                # widget.setVisible(currentPage == 'widgets')
             elif widget.objectName() == 'btn_more':
                 widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
 
             elif widget.objectName() == 'btn_adjustments':
                 widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
 
-            elif widget.objectName() == 'btn_export':
-                widget.setVisible(self.current_page == 'new')
-    # RESIZE EVENTS
-    # ///////////////////////////////////////////////////////////////
+        extrapMenuLayout = self.ui.topMenus.layout()
+        for i in range(extrapMenuLayout.count()):
+            widget = extrapMenuLayout.itemAt(i).widget()
+            if widget.objectName() == 'btn_export':
+                widget.setVisible(self.current_page == 'widgets')
+
     def openCloseLeftBox(self, page):
             UIFunctions.toggleLeftBox(self, True, page)
             print(page)
 
     def search_table(self, search_text):
         if search_text in self.dictionary or search_text.lower() in self.dictionary:
-            # self.tableWidget.setRowCount(len(self.dictionary[search_text]))
                 # show only the row that matches the user input key
                 items = widgets.tableWidget.findItems(search_text, QtCore.Qt.MatchExactly)
                 row = items[0].row()
@@ -215,7 +243,11 @@ class MainWindow(QMainWindow):
                 self.tempaddr += 'x'
             self.secondTable=False
             self.LoadExcel(widgets.tableWidget)
+            self.data["file"] = self.tempaddr
+        with open("variables.json", "w") as outfile:
+            outfile.write(json.dumps(self.data, indent=4))
     def LoadExcel(self, widget):
+
         for row in range(widget.rowCount()):
 
             for column in range(widget.columnCount()):
@@ -228,37 +260,46 @@ class MainWindow(QMainWindow):
                 Sheet = Table[arr_of_sheets[0]]
                 a = 0
                 for i in Sheet.iter_rows():
-                    # print(i[0].value)
                     if(a!=0):
-                        color = QColor(0,0,0)
-                        percentage = int(i[2].value)/int(i[1].value) * 100
-                        if percentage < 50 :
-                            color= QColor(255, 0, 0)
-                        elif 50<=percentage<= 80 :
-                            color = QColor(255, 127, 0)
-                        elif 80<percentage<= 100:
-                            color = QColor(0,  255, 0)
-                        for j in range(3):
+                        havetb = int(i[self.havetb_column].value)
+                        stock = int(i[self.stock_column].value)
 
-                            item = QTableWidgetItem(str(i[j].value))
-                            item.setForeground(color)
-                            widget.setItem(a, j, item)
-                        # if self.dictionary.keys() == []:
-                        self.keys.append(str(i[0].value))
-                        self.values.append(i[2].value)
-                        item4 = QTableWidgetItem(str(int(i[1].value)-int(i[2].value)))
+                        color = self.colortype_func(havetb, stock)
+
+
+                        item1 = QTableWidgetItem(str(i[self.a_number_column].value))
+                        item1.setForeground(color)
+                        widget.setItem(a, 0, item1)
+
+                        item2 = QTableWidgetItem()
+                        item2.setData(QtCore.Qt.DisplayRole, (int(i[self.havetb_column].value)))
+                        item2.setForeground(color)
+                        widget.setItem(a, 1, item2)
+
+                        item3 = QTableWidgetItem(str(int(i[self.stock_column].value)))
+                        item3.setForeground(color)
+                        widget.setItem(a, 2, item3)
+
+                        self.keys.append(str(i[self.a_number_column].value))
+                        self.values.append(str(i[0].value)+" " +str(i[1].value) + " " + str(i[5].value))
+
+                        item4 = QTableWidgetItem()
+                        item4.setData(QtCore.Qt.DisplayRole, int(i[self.havetb_column].value)-int(i[self.stock_column].value))
                         item4.setForeground(color)
                         widget.setItem(a, 3, item4)
 
-                        item5 = QTableWidgetItem(str(int(round((int(i[1].value)-int(i[2].value))/10 + 0.5))*10))
+                        diff_num = int(i[self.havetb_column].value)-int(i[self.stock_column].value)
+                        if diff_num>=0:
+                            item5 = QTableWidgetItem(str(int(round((diff_num)/10 + 0.5))*10))
+                        else :
+                            item5 = QTableWidgetItem(str(int(round((diff_num) / 10 - 0.5)) * 10))
                         item5.setForeground(color)
                         widget.setItem(a, 4, item5)
 
 
                     a+=1
-                #if self.dictionary.keys() == []:
                 self.dictionary = dict(zip(self.keys,self.values))
-                for row in range(widget.rowCount()):
+        for row in range(widget.rowCount()):
                     empty = True
                     for column in range(widget.columnCount()):
                         item = widget.item(row, column)
@@ -267,12 +308,51 @@ class MainWindow(QMainWindow):
                             self.end_non_empty = row
                             break
                     widget.setRowHidden(row, empty)
-                # print(self.dictionary)
+        self.TableSorting(widget, 'DESC', 3)
+        # widget.sortItems(3, QtCore.Qt.AscendingOrder, 2, 5)
 
-            # print(filepath)
 
+    def TableSorting(self, widget, method, sort_column):
+        row_data_list = []
+        for row in range(1, widget.rowCount()):
+
+            row_data = []
+            for col in range(widget.columnCount()):
+                item = widget.item(row, col)
+                if item != None and col != 0:
+                    row_data.append(int(item.text()))
+                if item != None and col == 0:
+                    row_data.append((item.text()))
+            if row_data != []:
+                row_data_list.append(row_data)
+        if method == "ASC":
+            row_data_list.sort(key=lambda x: x[sort_column], reverse=False)
+        else:
+            row_data_list.sort(key=lambda x: x[sort_column], reverse=True)
+
+        for row, row_data in enumerate(row_data_list, 1):
+            for col, cell_data in enumerate(row_data):
+                item = QTableWidgetItem()
+                item.setData(QtCore.Qt.DisplayRole, cell_data)
+                item.setForeground(self.colortype_func(row_data[1], row_data[2]))
+                widget.setItem(row, col, item)
+
+    def colortype_func(self, havetb, stock):
+        diff = havetb - stock
+        match diff:
+            case diff if diff >= 100:
+                color = QColor(255, 0, 0)
+            case diff if 50 <= diff < 100:
+                color = QColor(255, 127, 0)
+            case diff if 0 < diff < 50:
+                color = QColor(255, 255, 0)
+            case diff if (-1 * havetb) <= diff <= 0:
+                color = QColor(0, 255, 0)
+            case _:
+                color = QColor(255, 255, 255)
+        return color
     def Export_Rows(self):
-        selectionModel = widgets.tableWidgetSecond.selectionModel()
+        selectionModel = widgets.tableWidget.selectionModel()
         selectedRanges = selectionModel.selectedRows()
 
         # Create a new workbook
@@ -291,6 +371,10 @@ class MainWindow(QMainWindow):
         progressDialog.setCancelButton(None)
         # Export the selected rows to Excel
         realrow = 1
+        for i in range (5):
+            ws.cell(row=realrow, column=i + 1).fill =PatternFill(patternType='solid', fgColor=Color("538DD5"))
+            ws.cell(row=realrow, column=i+1).value = h[i]
+        realrow+=1
         for i, r in enumerate(selectedRanges):
             # Update the progress dialog
             progressDialog.setValue(i)
@@ -298,8 +382,8 @@ class MainWindow(QMainWindow):
                 break
 
             # Get the items in the row
-            rowItems = [widgets.tableWidgetSecond.item(r.row(), c) for c in
-                        range(widgets.tableWidgetSecond.columnCount())]
+            rowItems = [widgets.tableWidget.item(r.row(), c) for c in
+                        range(widgets.tableWidget.columnCount())]
 
             rowValues = []
             c=0
@@ -340,9 +424,9 @@ class MainWindow(QMainWindow):
         if fileName:
             wb.save(fileName)
     def CellClicked(self, row, column):
-        item = widgets.tableWidget.item(row, column)
-        if item is not None:
-            widgets.plainTextEdit.setPlainText(item.text())
+        item = widgets.tableWidget.item(row, 0)
+        if item is not None and row != 0:
+            widgets.plainTextEdit.setPlainText(str(self.dictionary[item.text()]))
 
     def resizeEvent(self, event):
         # Update Size Grips
