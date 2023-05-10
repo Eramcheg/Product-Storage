@@ -146,6 +146,7 @@ class UIFunctions(MainWindow):
 
             UIFunctions.start_box_animation(self, widthLeftBox, width, "right")
 
+
     def start_box_animation(self, left_box_width, right_box_width, direction):
         right_width = 0
         left_width = 0 

@@ -873,7 +873,17 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_11.addWidget(self.btn_more)
 
+        self.btn_global = QPushButton(self.extraTopMenu)
+        self.btn_global.setObjectName(u"btn_global")
+        sizePolicy.setHeightForWidth(self.btn_global.sizePolicy().hasHeightForWidth())
+        self.btn_global.setSizePolicy(sizePolicy)
+        self.btn_global.setMinimumSize(QSize(0, 45))
+        self.btn_global.setFont(font)
+        self.btn_global.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_global.setLayoutDirection(Qt.LeftToRight)
+        self.btn_global.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-layers.png);")
 
+        self.verticalLayout_11.addWidget(self.btn_global)
 
 
 
@@ -1246,18 +1256,18 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.scrollArea, 0, 5, 3, 1)
 
-        # self.comboBox = QComboBox(self.row_2)
-        # self.comboBox.addItem("")
-        # self.comboBox.addItem("")
-        # self.comboBox.addItem("")
-        # self.comboBox.setObjectName(u"comboBox")
-        # self.comboBox.setFont(font)
-        # self.comboBox.setAutoFillBackground(False)
-        # self.comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        # self.comboBox.setIconSize(QSize(16, 16))
-        # self.comboBox.setFrame(True)
-        #
-        # self.gridLayout_2.addWidget(self.comboBox, 1, 0, 1, 2)
+        self.comboBox = QComboBox(self.row_2)
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.addItem("")
+        self.comboBox.setObjectName(u"comboBox")
+        self.comboBox.setFont(font)
+        self.comboBox.setAutoFillBackground(False)
+        self.comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        self.comboBox.setIconSize(QSize(16, 16))
+        self.comboBox.setFrame(True)
+
+        self.gridLayout_2.addWidget(self.comboBox, 1, 0, 1, 2)
 
 #         self.horizontalScrollBar = QScrollBar(self.row_2)
 #         self.horizontalScrollBar.setObjectName(u"horizontalScrollBar")
@@ -1634,6 +1644,7 @@ class Ui_MainWindow(object):
         self.tableWidgetSecond.verticalHeader().setCascadingSectionResizes(False)
         self.tableWidgetSecond.verticalHeader().setHighlightSections(False)
         self.tableWidgetSecond.verticalHeader().setStretchLastSection(True)
+
         self.button_select = QPushButton(self.row_3)
         self.button_select.setObjectName(u"btn_select")
         self.button_select.setMinimumSize(QSize(150, 30))
@@ -1641,6 +1652,13 @@ class Ui_MainWindow(object):
         self.button_select.setCursor(QCursor(Qt.PointingHandCursor))
         self.button_select.setStyleSheet(u"background-color: rgb(52, 59, 72);")
         self.verticalLayout.addWidget(self.button_select)
+        self.button_reset = QPushButton(self.row_3)
+        self.button_reset.setObjectName(u"btn_reset")
+        self.button_reset.setMinimumSize(QSize(80, 30))
+        self.button_reset.setFont(font)
+        self.button_reset.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button_reset.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        self.verticalLayout.addWidget(self.button_reset)
         # self.horizontalLayout_12.addWidget(self.button_select)
         self.horizontalLayout_12.addWidget(self.tableWidget)
 
@@ -1850,6 +1868,7 @@ class Ui_MainWindow(object):
         self.btn_share.setText(QCoreApplication.translate("MainWindow", u"Share", None))
         self.btn_adjustments.setText(QCoreApplication.translate("MainWindow", u"Adjustments", None))
         self.btn_more.setText(QCoreApplication.translate("MainWindow", u"More", None))
+        self.btn_global.setText(QCoreApplication.translate("MainWindow", u"Global", None))
         self.btn_export.setText(QCoreApplication.translate("MainWindow", u"Export to excel", None))
         self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
@@ -1881,9 +1900,9 @@ class Ui_MainWindow(object):
         # self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Label description", None))
         # self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
         # self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
-        # self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
-        # self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Test 2", None))
-        # self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Test 3", None))
+        self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Test 2", None))
+        self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Test 3", None))
 
         # self.commandLinkButton.setText(QCoreApplication.translate("MainWindow", u"Link Button", None))
         # self.commandLinkButton.setDescription(QCoreApplication.translate("MainWindow", u"Link description", None))
@@ -2012,6 +2031,7 @@ class Ui_MainWindow(object):
         self.btn_message.setText(QCoreApplication.translate("MainWindow", u"Message", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"Print", None))
         self.button_select.setText(QCoreApplication.translate("MainWindow", u"Select all rows", None))
+        self.button_reset.setText(QCoreApplication.translate("MainWindow", u"Reset sorting to default", None))
         self.btn_logout.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"Alpha v0.0.1", None))
     # retranslateUi
