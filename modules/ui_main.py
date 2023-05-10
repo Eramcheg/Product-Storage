@@ -825,6 +825,30 @@ class Ui_MainWindow(object):
         self.extraContent.setObjectName(u"extraContent")
         self.extraContent.setFrameShape(QFrame.NoFrame)
         self.extraContent.setFrameShadow(QFrame.Raised)
+        # self.scrbarea = QScrollArea(self.extraContent)
+        # self.scrbarea.setObjectName(u"scrollArea")
+        # self.scrbarea.setStyleSheet(u" QScrollBar:vertical {\n"
+        #                               "    background: rgb(52, 59, 72);\n"
+        #                               " }\n"
+        #                               " QScrollBar:horizontal {\n"
+        #                               "    background: rgb(52, 59, 72);\n"
+        #                               " }")
+        # self.scrbarea.setFrameShape(QFrame.NoFrame)
+        # self.scrbarea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        # self.scrbarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        # self.scrbarea.setWidgetResizable(True)
+        # self.scrollAreaWidgetContents = QWidget()
+        # self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        # self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 218, 218))
+        # self.scrollAreaWidgetContents.setStyleSheet(u" QScrollBar:vertical {\n"
+        #                                             "	border: none;\n"
+        #                                             "    background: rgb(52, 59, 72);\n"
+        #                                             "    width: 14px;\n"
+        #                                             "    margin: 21px 0 21px 0;\n"
+        #                                             "	border-radius: 0px;\n"
+        #                                             " }")
+        # self.horizontalLayout_11 = QHBoxLayout(self.scrollAreaWidgetContents)
+        # self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.verticalLayout_12 = QVBoxLayout(self.extraContent)
         self.verticalLayout_12.setSpacing(0)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
@@ -846,8 +870,16 @@ class Ui_MainWindow(object):
         self.btn_share.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_share.setLayoutDirection(Qt.LeftToRight)
         self.btn_share.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-share-boxed.png);")
-
+        # self.verticalScrollBar = QScrollBar(self.extraTopMenu)
+        # self.verticalScrollBar.setObjectName(u"verticalScrollBar")
+        # self.verticalScrollBar.setStyleSheet(u" QScrollBar:vertical { background: rgb(52, 59, 72); }\n"
+        # " QScrollBar:horizontal { background: rgb(52, 59, 72); }")
+        # self.verticalScrollBar.setOrientation(Qt.Vertical)
         self.verticalLayout_11.addWidget(self.btn_share)
+
+
+        # self.verticalLayout_11.addWidget(self.verticalScrollBar)
+
 
         self.btn_adjustments = QPushButton(self.extraTopMenu)
         self.btn_adjustments.setObjectName(u"btn_adjustments")
@@ -1256,18 +1288,18 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.scrollArea, 0, 5, 3, 1)
 
-        self.comboBox = QComboBox(self.row_2)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setFont(font)
-        self.comboBox.setAutoFillBackground(False)
-        self.comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
-        self.comboBox.setIconSize(QSize(16, 16))
-        self.comboBox.setFrame(True)
-
-        self.gridLayout_2.addWidget(self.comboBox, 1, 0, 1, 2)
+        # self.comboBox = QComboBox(self.row_2)
+        # self.comboBox.addItem("")
+        # self.comboBox.addItem("")
+        # self.comboBox.addItem("")
+        # self.comboBox.setObjectName(u"comboBox")
+        # self.comboBox.setFont(font)
+        # self.comboBox.setAutoFillBackground(False)
+        # self.comboBox.setStyleSheet(u"background-color: rgb(33, 37, 43);")
+        # self.comboBox.setIconSize(QSize(16, 16))
+        # self.comboBox.setFrame(True)
+        #
+        # self.gridLayout_2.addWidget(self.comboBox, 1, 0, 1, 2)
 
 #         self.horizontalScrollBar = QScrollBar(self.row_2)
 #         self.horizontalScrollBar.setObjectName(u"horizontalScrollBar")
@@ -1322,7 +1354,6 @@ class Ui_MainWindow(object):
         self.button1.setIconSize(QSize(18, 18))
         self.button2.setIconSize(QSize(18, 18))
         self.button1.setFlat(True)
-
         self.button2.setFlat(True)
         layout.addWidget(self.label1)
         layout.addWidget(self.button1)
@@ -1405,6 +1436,30 @@ class Ui_MainWindow(object):
         layout.setContentsMargins(0, 0, 0, 0)
         self.container4.setLayout(layout)
 
+        self.container5 = QWidget()
+        layout = QHBoxLayout(self.container5)
+        self.label5 = QLabel()
+        self.button9 = QPushButton()
+        self.button10 = QPushButton()
+        self.button9.setObjectName(u"AscButton5")
+        self.button9.setFixedSize(QSize(30, 30))
+        self.button9.setFont(font)
+        self.button9.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button10.setObjectName(u"DescButton5")
+        self.button10.setFixedSize(QSize(30, 30))
+        self.button10.setFont(font)
+        self.button10.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        self.button9.setIcon(icon4_1)
+        self.button10.setIcon(icon4_2)
+        self.button9.setIconSize(QSize(18, 18))
+        self.button10.setIconSize(QSize(18, 18))
+        layout.addWidget(self.label5)
+        layout.addWidget(self.button9)
+        layout.addWidget(self.button10)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.container5.setLayout(layout)
 
         self.verticalLayout_19.addLayout(self.gridLayout_2)
 
@@ -1900,9 +1955,9 @@ class Ui_MainWindow(object):
         # self.labelVersion_3.setText(QCoreApplication.translate("MainWindow", u"Label description", None))
         # self.checkBox.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
         # self.radioButton.setText(QCoreApplication.translate("MainWindow", u"RadioButton", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Test 2", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Test 3", None))
+        # self.comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Test 1", None))
+        # self.comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"Test 2", None))
+        # self.comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"Test 3", None))
 
         # self.commandLinkButton.setText(QCoreApplication.translate("MainWindow", u"Link Button", None))
         # self.commandLinkButton.setDescription(QCoreApplication.translate("MainWindow", u"Link description", None))
@@ -1950,10 +2005,11 @@ class Ui_MainWindow(object):
         __sortingEnabled = self.tableWidget.isSortingEnabled()
 
 
-        self.tableWidget.setCellWidget(0, 1, self.container1)
-        self.tableWidget.setCellWidget(0, 2, self.container2)
-        self.tableWidget.setCellWidget(0, 3, self.container3)
-        self.tableWidget.setCellWidget(0, 4, self.container4)
+        self.tableWidget.setCellWidget(0, 0, self.container1)
+        self.tableWidget.setCellWidget(0, 1, self.container2)
+        self.tableWidget.setCellWidget(0, 2, self.container3)
+        self.tableWidget.setCellWidget(0, 3, self.container4)
+        self.tableWidget.setCellWidget(0, 4, self.container5)
         ___qtablewidgetitem20 = self.tableWidget.item(0, 0)
         ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
         ___qtablewidgetitem21 = self.tableWidget.item(0, 1)

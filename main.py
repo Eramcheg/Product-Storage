@@ -70,6 +70,7 @@ class MainWindow(QMainWindow):
         self.firstTable = False
         self.secondTable = False
         self.current_page = "home"
+        self.set_factorys  = set()
 
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
@@ -116,11 +117,13 @@ class MainWindow(QMainWindow):
         widgets.button6.clicked.connect(self.buttonClick)
         widgets.button7.clicked.connect(self.buttonClick)
         widgets.button8.clicked.connect(self.buttonClick)
+        widgets.button9.clicked.connect(self.buttonClick)
+        widgets.button10.clicked.connect(self.buttonClick)
         widgets.btn_global.clicked.connect(self.buttonClick)
         widgets.button_reset.clicked.connect(self.buttonClick)
         self.buttonarray = [widgets.button1, widgets.button2, widgets.button3, widgets.button4,
-                         widgets.button5, widgets.button6, widgets.button7, widgets.button8]
-        self.sorting_design(widgets.button6)
+                         widgets.button5, widgets.button6, widgets.button7, widgets.button8, widgets.button9, widgets.button10]
+        self.sorting_design(widgets.button8)
         self.already_created = False
 
         self.another_dict = {}
@@ -140,7 +143,7 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         useCustomTheme = False
         themeFile = "themes\py_dracula_light.qss"
-        self.array_keys = [3]
+        self.array_keys = [4]
         # SET THEME AND HACKS
         if useCustomTheme:
             # LOAD AND APPLY STYLE
@@ -170,8 +173,6 @@ class MainWindow(QMainWindow):
                 num = int(btnName[-1]) * 2 - 2
             self.buttonarray[num].setStyleSheet("""
                     """)
-
-
             button.setStyleSheet("background-color: #ff79c6;")
 
     def buttonClick(self):
@@ -218,29 +219,33 @@ class MainWindow(QMainWindow):
             self.Export_Rows()
         if btnName == "btn_select":
             selection_range = widgets.tableWidget.selectAll()
-        if btnName in ["AscButton1","AscButton2","AscButton3","AscButton4"] :
+        if btnName in ["AscButton1","AscButton2","AscButton3","AscButton4", "AscButton5"] :
             self.sorting_design(btn)
             column = int(btnName[-1])
             if column not in self.array_keys:
-                self.TableSorting(widgets.tableWidget, 'ASC', column)
+                self.TableSorting(widgets.tableWidget, 'Asc', column)
             else:
-                self.TableSorting(widgets.tableWidget, 'ASC', column)
+                self.TableSorting(widgets.tableWidget, 'Asc', column)
                 self.reset_button_style(btn)
 
-        if btnName in ["DescButton1", "DescButton2", "DescButton3", "DescButton4"]:
+        if btnName in ["DescButton1", "DescButton2", "DescButton3", "DescButton4", "DescButton5"]:
             self.sorting_design(btn)
             column = int(btnName[-1])
             if column*-1 not in self.array_keys:
-                self.TableSorting(widgets.tableWidget, 'DESC', column)
+                self.TableSorting(widgets.tableWidget, 'Desc', column)
             else:
-                self.TableSorting(widgets.tableWidget, 'DESC', column)
+                self.TableSorting(widgets.tableWidget, 'Desc', column)
                 self.reset_button_style(btn)
         if btnName == "btn_reset":
-            self.array_keys = [-3]
-            self.TableSorting(widgets.tableWidget, 'DESC', 3)
+            self.array_keys = [-4]
+            self.TableSorting(widgets.tableWidget, 'Desc', 4)
             self.reset_button_style()
 
         if btnName == "btn_global":
+            self.reset_selected_factory()
+            self.array_keys=[]
+            style = btn.styleSheet()
+            btn.setStyleSheet(style + "\n" + "background-color: rgb(29, 34, 38)")
             self.option = "global"
             self.LoadExcel(widgets.tableWidget)
             # self.TableSorting(widgets.tableWidget, 'DESC', 3)
@@ -258,13 +263,15 @@ class MainWindow(QMainWindow):
         extraTopMenuLayout = self.ui.extraTopMenu.layout()
         for i in range(extraTopMenuLayout.count()):
             widget = extraTopMenuLayout.itemAt(i).widget()
+            # print(widget.objectName() in self.set_factorys)
             if widget.objectName() == 'btn_share':
-                widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
+                widget.setVisible(self.current_page == 'home' )
             elif widget.objectName() == 'btn_more':
-                widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
-
+                widget.setVisible(self.current_page == 'home' )
             elif widget.objectName() == 'btn_adjustments':
-                widget.setVisible(self.current_page == 'home' or self.current_page == 'widgets')
+                widget.setVisible(self.current_page == 'home' )
+            elif widget.objectName() in list(self.set_factorys) or widget.objectName() == "btn_global":
+                widget.setVisible( self.current_page == 'widgets')
 
         extrapMenuLayout = self.ui.topMenus.layout()
         for i in range(extrapMenuLayout.count()):
@@ -323,6 +330,7 @@ class MainWindow(QMainWindow):
                 for i in Sheet.iter_rows():
                     if (a != 0):
                         key2_0.add(int(i[5].value))
+                        self.set_factorys.add(str(i[5].value))
                     a += 1
                 for i in key2_0:
                     self.another_dict[i] = []
@@ -331,33 +339,14 @@ class MainWindow(QMainWindow):
                 for i in Sheet.iter_rows():
                     if(a!=0):
 
-                        havetb = int(i[self.havetb_column].value)
-                        stock = int(i[self.stock_column].value)
-
-                        # color = self.colortype_func(havetb, stock)
-
-                        # item1 = QTableWidgetItem(str(i[self.a_number_column].value))
-                        # item1.setForeground(color)
-                        # widget.setItem(a, 0, item1)
-
                         item2 = QTableWidgetItem()
                         item2.setData(QtCore.Qt.DisplayRole, (int(i[self.havetb_column].value)))
-                        # item2.setForeground(color)
-                        # widget.setItem(a, 1, item2)
-
-                        # item3 = QTableWidgetItem(str(int(i[self.stock_column].value)))
-                        # item3.setForeground(color)
-                        # widget.setItem(a, 2, item3)
-
-
 
                         self.keys.append(str(i[self.a_number_column].value))
                         self.values.append(str(i[0].value)+" " +str(i[1].value) + " " + str(i[5].value))
 
                         item4 = QTableWidgetItem()
                         item4.setData(QtCore.Qt.DisplayRole, int(i[self.havetb_column].value)-int(i[self.stock_column].value))
-                        # item4.setForeground(color)
-                        # widget.setItem(a, 3, item4)
 
                         diff_num = int(i[self.havetb_column].value)-int(i[self.stock_column].value)
                         item5 = QTableWidgetItem()
@@ -366,62 +355,60 @@ class MainWindow(QMainWindow):
                         else :
                             item5.setData(QtCore.Qt.DisplayRole, int(int(round((diff_num) / 10 - 0.5)) * 10))
 
-                        # item5.setForeground(color)
-                        # widget.setItem(a, 4, item5)
+
                         all_values = [str(i[0].value), int(i[2].value), int(i[3].value),diff_num,
                                                                   int(item5.text()), int(i[5].value)]
-
-                        # if option != "global":
-                        #     if str(i[5].value) == option:
                         self.keys_for_dict.append(str(i[0].value))
                         self.dict_values_factory.append(all_values)
-
                         self.another_dict[int(i[5].value)].append(all_values)
-                        # keys_all.append(all_values)
+
                     a+=1
-                # self.another_dict = dict(zip(self.keys, keys_all))
-                # print(self.another_dict)
+
                 self.dictionary = dict(zip(self.keys,self.values))
                 self.dictionary_all_values = dict(zip(self.keys_for_dict, self.dict_values_factory))
-
+                # self.set_factorys = set(key2_0)
                 if self.flag_generate_factorys == True:
                     key2_0 = sorted(key2_0)
                     for i in range(0,len(key2_0)):
                             name = key2_0.pop(0)
                             button = QPushButton(f"{name}")
                             button.setObjectName(f"{name}")
-                            # sizePolicy.setHeightForWidth(button.sizePolicy().hasHeightForWidth())
-                            # button.setSizePolicy(sizePolicy)
                             button.setMinimumSize(QSize(0, 45))
-                            # self.btn_share.setFont
                             button.setCursor(QCursor(Qt.PointingHandCursor))
                             button.setLayoutDirection(Qt.LeftToRight)
                             button.setStyleSheet(
-                                u"background-image: url(:/icons/images/icons/cil-share-boxed.png);")
+                                u"background-image: url(images/icons/cil-share-boxed.png);")
                             button.clicked.connect(partial( self.ForButtons,button, widget))
                             widgets.verticalLayout_11.addWidget(button)
                     self.flag_generate_factorys = False
 
-        self.TableSorting(widgets.tableWidget, 'DESC', 3)
+        self.TableSorting(widgets.tableWidget, 'Des', 4)
         # widget.sortItems(3, QtCore.Qt.AscendingOrder, 2, 5)
 
     def ForButtons(self, button,widget):
-        # print(button.objectName())
         self.array_keys = []
         self.option = button.objectName()
         self.LoadExcel(widget)
-
-        # print(widget.rowCount())
-        # self.TableSorting(widget, 'DESC', 3, button.objectName())
+        self.Must_have()
+        self.reset_selected_factory()
+        widgets.btn_global.setStyleSheet((widgets.btn_global.styleSheet()).replace("background-color: rgb(29, 34, 38)", "") )
+        self.sorting_design(widgets.button8)
+        style = button.styleSheet()
+        button.setStyleSheet(style+ "\n"+"background-color: rgb(29, 34, 38)")
+    def reset_selected_factory(self):
+        for i in self.set_factorys:
+            my_button = self.findChild(QtWidgets.QPushButton, i)
+            my_button.setStyleSheet(u"background-image: url(images/icons/cil-share-boxed.png);")
     def TableSorting(self, widget, method, sort_column):
         widget.setRowCount(1)
         widget.setRowCount(len(self.dictionary_all_values)+1)
         row_data_list = []
 
+        # self.sorting_design(self.findChild(QtWidgets.QPushButton, method+"Button"+str(sort_column)))
 
 
         print(self.array_keys)
-        if method == 'ASC':
+        if method == 'Asc':
             sort_column = sort_column
         else:
             sort_column= sort_column*-1
@@ -459,7 +446,9 @@ class MainWindow(QMainWindow):
                 if row_data != []:
                     row_data_list.append(row_data)
 
-        row_data_list.sort(key=lambda x: tuple(x[col] if col > 0 else -x[col*-1] for col in self.array_keys))
+
+        row_data_list.sort(key=lambda x: tuple(x[col - 1] if col > 0  else -x[(col*-1) - 1] if col != -1 else int(''.join(filter(str.isdigit, str(x[col*-1 - 1])))) for col in self.array_keys), reverse=True if col==-1  else False)
+
         for row, row_data in enumerate(row_data_list, 1):
             for col, cell_data in enumerate(row_data):
                 item = QTableWidgetItem()
