@@ -45,6 +45,8 @@ class MainWindow(QMainWindow):
 
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
+        self.factory_column = 5
+        self.a_descr_column = 1
         file = open('variables.json')
         self.data = json.load(file)
         print(self.data["file"])
@@ -205,9 +207,9 @@ class MainWindow(QMainWindow):
             UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
             # if self.dictionary.keys() == {}:
-            if self.secondTable == False:
-                self.LoadExcel(widgets.tableWidgetSecond)
-                self.secondTable=True
+            # if self.secondTable == False:
+            #     self.LoadExcel(widgets.tableWidgetSecond)
+            #     self.secondTable=True
             self.current_page = "new"
             self.Must_have()
 
@@ -294,8 +296,7 @@ class MainWindow(QMainWindow):
             widgets.tableWidget.setCurrentItem(widgets.tableWidget.item(0, 0))
 
     def OpenExcelFile(self):
-        # tempdir = filedialog.askopenfilename(initialdir="/", title="Select An Excel File", filetypes=(
-        #     ("excel files", "*.xlsx"), ("old excel files", "*.xls"), ("All files", "*.*")))
+
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.ExistingFile)
         dialog.setNameFilter("Excel Files (*.xlsx *.xls)")
@@ -305,6 +306,7 @@ class MainWindow(QMainWindow):
                 x2x = XLS2XLSX(self.tempaddr)
                 x2x.to_xlsx(self.tempaddr + 'x')
                 self.tempaddr += 'x'
+
             self.flag_generate_factorys = True
             self.secondTable=False
             self.LoadExcel(widgets.tableWidget, "global")
@@ -321,7 +323,6 @@ class MainWindow(QMainWindow):
                     item.setText("")
                     widget.setRowHidden(row, False)
         key2_0 = set()
-        # keys_all = []
         if len(self.tempaddr) > 0:
                 arr_of_sheets = (openpyxl.load_workbook(self.tempaddr, read_only=True)).sheetnames
                 Table = openpyxl.load_workbook(self.tempaddr)
@@ -339,25 +340,19 @@ class MainWindow(QMainWindow):
                 for i in Sheet.iter_rows():
                     if(a!=0):
 
-                        item2 = QTableWidgetItem()
-                        item2.setData(QtCore.Qt.DisplayRole, (int(i[self.havetb_column].value)))
+                        number = str(i[self.a_number_column].value)
+                        descr = str(i[self.a_descr_column].value)
+                        havetb = int(i[self.havetb_column].value)
+                        stock = int(i[self.stock_column].value)
+                        factory = str(i[self.factory_column].value)
+                        diff_num = havetb - stock
 
-                        self.keys.append(str(i[self.a_number_column].value))
-                        self.values.append(str(i[0].value)+" " +str(i[1].value) + " " + str(i[5].value))
+                        self.keys.append(number)
+                        self.values.append(number+" " +descr + " " + factory)
 
-                        item4 = QTableWidgetItem()
-                        item4.setData(QtCore.Qt.DisplayRole, int(i[self.havetb_column].value)-int(i[self.stock_column].value))
+                        diff_up_to_10 = int(round((diff_num)/10 + (0.5 if diff_num>=0 else -0.5)))*10
+                        all_values = [number, havetb, stock,diff_num, diff_up_to_10, factory]
 
-                        diff_num = int(i[self.havetb_column].value)-int(i[self.stock_column].value)
-                        item5 = QTableWidgetItem()
-                        if diff_num>=0:
-                            item5.setData(QtCore.Qt.DisplayRole, int(int(round((diff_num)/10 + 0.5))*10))
-                        else :
-                            item5.setData(QtCore.Qt.DisplayRole, int(int(round((diff_num) / 10 - 0.5)) * 10))
-
-
-                        all_values = [str(i[0].value), int(i[2].value), int(i[3].value),diff_num,
-                                                                  int(item5.text()), int(i[5].value)]
                         self.keys_for_dict.append(str(i[0].value))
                         self.dict_values_factory.append(all_values)
                         self.another_dict[int(i[5].value)].append(all_values)
@@ -366,7 +361,7 @@ class MainWindow(QMainWindow):
 
                 self.dictionary = dict(zip(self.keys,self.values))
                 self.dictionary_all_values = dict(zip(self.keys_for_dict, self.dict_values_factory))
-                # self.set_factorys = set(key2_0)
+
                 if self.flag_generate_factorys == True:
                     key2_0 = sorted(key2_0)
                     for i in range(0,len(key2_0)):
@@ -404,10 +399,7 @@ class MainWindow(QMainWindow):
         widget.setRowCount(len(self.dictionary_all_values)+1)
         row_data_list = []
 
-        # self.sorting_design(self.findChild(QtWidgets.QPushButton, method+"Button"+str(sort_column)))
 
-
-        print(self.array_keys)
         if method == 'Asc':
             sort_column = sort_column
         else:
@@ -426,7 +418,7 @@ class MainWindow(QMainWindow):
                 row_data = []
                 for col in range(widget.columnCount()):
                         item = list(self.dictionary_all_values.values())[row]
-                        # print(item)
+
                         if item != None and col != 0:
                             row_data.append(int(item[col]))
                         if item != None and col == 0:
@@ -437,7 +429,6 @@ class MainWindow(QMainWindow):
             for row in range(1, len(self.another_dict[int(self.option)])):
                 row_data = []
                 for col in range(widget.columnCount()):
-                    # if widget.isRowHidden(row)==False:
                         item = self.another_dict[int(self.option)][row]
                         if item != None and col != 0 :
                             row_data.append(item[col])

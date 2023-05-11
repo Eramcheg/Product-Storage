@@ -1481,67 +1481,67 @@ class Ui_MainWindow(object):
         font4 = QFont()
         font4.setFamily(u"Segoe UI")
 
-        self.tableWidgetSecond = CustomTableWidget(self.row_3)
-        if (self.tableWidgetSecond.columnCount() < 5):
-            self.tableWidgetSecond.setColumnCount(5)
-        # self.tableWidgetSecond.setHorizontalHeaderLabels(CustomHeaderView(self.tableWidgetSecond))
-        __qsecondtablewidgetitem = QTableWidgetItem()
-        self.tableWidgetSecond.setHorizontalHeaderItem(0, __qsecondtablewidgetitem)
-        __qsecondtablewidgetitem1 = QTableWidgetItem()
-        self.tableWidgetSecond.setHorizontalHeaderItem(1, __qsecondtablewidgetitem1)
-        __qsecondtablewidgetitem2 = QTableWidgetItem()
-        self.tableWidgetSecond.setHorizontalHeaderItem(2, __qsecondtablewidgetitem2)
-        __qsecondtablewidgetitem3 = QTableWidgetItem()
-        self.tableWidgetSecond.setHorizontalHeaderItem(3, __qsecondtablewidgetitem3)
-        if (self.tableWidgetSecond.rowCount() < 19000):
-            self.tableWidgetSecond.setRowCount(19000)
-
-        __qsecondtablewidgetitem4 = QTableWidgetItem()
-
-        __qsecondtablewidgetitem4.setFont(font4);
-        self.tableWidgetSecond.setVerticalHeaderItem(0, __qsecondtablewidgetitem4)
-        __qsecondtablewidgetitem5 = QTableWidgetItem()
-        __qsecondtablewidgetitem5.setBackground(QColor(255, 255, 0))
-        self.tableWidgetSecond.setVerticalHeaderItem(1, __qsecondtablewidgetitem5)
-        __qsecondtablewidgetitem6 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(2, __qsecondtablewidgetitem6)
-        __qsecondtablewidgetitem7 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(3, __qsecondtablewidgetitem7)
-        __qsecondtablewidgetitem8 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(4, __qsecondtablewidgetitem8)
-        __qsecondtablewidgetitem9 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(5, __qsecondtablewidgetitem9)
-        __qsecondtablewidgetitem10 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(6, __qsecondtablewidgetitem10)
-        __qsecondtablewidgetitem11 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(7, __qsecondtablewidgetitem11)
-        __qsecondtablewidgetitem12 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(8, __qsecondtablewidgetitem12)
-        __qsecondtablewidgetitem13 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(9, __qsecondtablewidgetitem13)
-        __qsecondtablewidgetitem14 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(10, __qsecondtablewidgetitem14)
-        __qsecondtablewidgetitem15 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(11, __qsecondtablewidgetitem15)
-        __qsecondtablewidgetitem16 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(12, __qsecondtablewidgetitem16)
-        __qsecondtablewidgetitem17 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(13, __qsecondtablewidgetitem17)
-        __qsecondtablewidgetitem18 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(14, __qsecondtablewidgetitem18)
-        __qsecondtablewidgetitem19 = QTableWidgetItem()
-        self.tableWidgetSecond.setVerticalHeaderItem(15, __qsecondtablewidgetitem19)
-        __qsecondtablewidgetitem20 = QTableWidgetItem()
-        self.tableWidgetSecond.setItem(0, 0, __qsecondtablewidgetitem20)
-        __qsecondtablewidgetitem21 = QTableWidgetItem()
-        self.tableWidgetSecond.setItem(0, 1, __qsecondtablewidgetitem21)
-        __qsecondtablewidgetitem22 = QTableWidgetItem()
-        self.tableWidgetSecond.setItem(0, 2, __qsecondtablewidgetitem22)
-        __qsecondtablewidgetitem23 = QTableWidgetItem()
-        self.tableWidgetSecond.setItem(0, 3, __qsecondtablewidgetitem23)
-        __qsecondtablewidgetitem24 = QTableWidgetItem()
-        self.tableWidgetSecond.setItem(0, 4, __qsecondtablewidgetitem24)
-        self.tableWidgetSecond.setObjectName(u"tableWidget")
+        # self.tableWidgetSecond = CustomTableWidget(self.row_3)
+        # if (self.tableWidgetSecond.columnCount() < 5):
+        #     self.tableWidgetSecond.setColumnCount(5)
+        # # self.tableWidgetSecond.setHorizontalHeaderLabels(CustomHeaderView(self.tableWidgetSecond))
+        # __qsecondtablewidgetitem = QTableWidgetItem()
+        # self.tableWidgetSecond.setHorizontalHeaderItem(0, __qsecondtablewidgetitem)
+        # __qsecondtablewidgetitem1 = QTableWidgetItem()
+        # self.tableWidgetSecond.setHorizontalHeaderItem(1, __qsecondtablewidgetitem1)
+        # __qsecondtablewidgetitem2 = QTableWidgetItem()
+        # self.tableWidgetSecond.setHorizontalHeaderItem(2, __qsecondtablewidgetitem2)
+        # __qsecondtablewidgetitem3 = QTableWidgetItem()
+        # self.tableWidgetSecond.setHorizontalHeaderItem(3, __qsecondtablewidgetitem3)
+        # if (self.tableWidgetSecond.rowCount() < 19000):
+        #     self.tableWidgetSecond.setRowCount(19000)
+        #
+        # __qsecondtablewidgetitem4 = QTableWidgetItem()
+        #
+        # __qsecondtablewidgetitem4.setFont(font4);
+        # self.tableWidgetSecond.setVerticalHeaderItem(0, __qsecondtablewidgetitem4)
+        # __qsecondtablewidgetitem5 = QTableWidgetItem()
+        # __qsecondtablewidgetitem5.setBackground(QColor(255, 255, 0))
+        # self.tableWidgetSecond.setVerticalHeaderItem(1, __qsecondtablewidgetitem5)
+        # __qsecondtablewidgetitem6 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(2, __qsecondtablewidgetitem6)
+        # __qsecondtablewidgetitem7 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(3, __qsecondtablewidgetitem7)
+        # __qsecondtablewidgetitem8 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(4, __qsecondtablewidgetitem8)
+        # __qsecondtablewidgetitem9 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(5, __qsecondtablewidgetitem9)
+        # __qsecondtablewidgetitem10 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(6, __qsecondtablewidgetitem10)
+        # __qsecondtablewidgetitem11 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(7, __qsecondtablewidgetitem11)
+        # __qsecondtablewidgetitem12 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(8, __qsecondtablewidgetitem12)
+        # __qsecondtablewidgetitem13 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(9, __qsecondtablewidgetitem13)
+        # __qsecondtablewidgetitem14 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(10, __qsecondtablewidgetitem14)
+        # __qsecondtablewidgetitem15 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(11, __qsecondtablewidgetitem15)
+        # __qsecondtablewidgetitem16 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(12, __qsecondtablewidgetitem16)
+        # __qsecondtablewidgetitem17 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(13, __qsecondtablewidgetitem17)
+        # __qsecondtablewidgetitem18 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(14, __qsecondtablewidgetitem18)
+        # __qsecondtablewidgetitem19 = QTableWidgetItem()
+        # self.tableWidgetSecond.setVerticalHeaderItem(15, __qsecondtablewidgetitem19)
+        # __qsecondtablewidgetitem20 = QTableWidgetItem()
+        # self.tableWidgetSecond.setItem(0, 0, __qsecondtablewidgetitem20)
+        # __qsecondtablewidgetitem21 = QTableWidgetItem()
+        # self.tableWidgetSecond.setItem(0, 1, __qsecondtablewidgetitem21)
+        # __qsecondtablewidgetitem22 = QTableWidgetItem()
+        # self.tableWidgetSecond.setItem(0, 2, __qsecondtablewidgetitem22)
+        # __qsecondtablewidgetitem23 = QTableWidgetItem()
+        # self.tableWidgetSecond.setItem(0, 3, __qsecondtablewidgetitem23)
+        # __qsecondtablewidgetitem24 = QTableWidgetItem()
+        # self.tableWidgetSecond.setItem(0, 4, __qsecondtablewidgetitem24)
+        # self.tableWidgetSecond.setObjectName(u"tableWidget")
 
 
 
@@ -1617,8 +1617,8 @@ class Ui_MainWindow(object):
         sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.tableWidgetSecond.sizePolicy().hasHeightForWidth())
-        self.tableWidgetSecond.setSizePolicy(sizePolicy4)
+        # sizePolicy3.setHeightForWidth(self.tableWidgetSecond.sizePolicy().hasHeightForWidth())
+        # self.tableWidgetSecond.setSizePolicy(sizePolicy4)
 
         palette = QPalette()
         brush = QBrush(QColor(221, 221, 221, 255))
@@ -1681,24 +1681,24 @@ class Ui_MainWindow(object):
         self.tableWidget.setRowHeight(0, 50)
 
 
-        self.tableWidgetSecond.setPalette(palette)
-        self.tableWidgetSecond.setFrameShape(QFrame.NoFrame)
-        self.tableWidgetSecond.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        self.tableWidgetSecond.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.tableWidgetSecond.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        # self.tableWidgetSecond.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.tableWidgetSecond.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.tableWidgetSecond.setShowGrid(True)
-        self.tableWidgetSecond.setGridStyle(Qt.SolidLine)
-        self.tableWidgetSecond.setSortingEnabled(False)
-        self.tableWidgetSecond.horizontalHeader().setVisible(False)
-        self.tableWidgetSecond.horizontalHeader().setCascadingSectionResizes(True)
-        self.tableWidgetSecond.horizontalHeader().setDefaultSectionSize(200)
-        self.tableWidgetSecond.horizontalHeader().setStretchLastSection(True)
-        self.tableWidgetSecond.verticalHeader().setVisible(False)
-        self.tableWidgetSecond.verticalHeader().setCascadingSectionResizes(False)
-        self.tableWidgetSecond.verticalHeader().setHighlightSections(False)
-        self.tableWidgetSecond.verticalHeader().setStretchLastSection(True)
+        # self.tableWidgetSecond.setPalette(palette)
+        # self.tableWidgetSecond.setFrameShape(QFrame.NoFrame)
+        # self.tableWidgetSecond.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        # self.tableWidgetSecond.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        # self.tableWidgetSecond.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        # # self.tableWidgetSecond.setSelectionMode(QAbstractItemView.SingleSelection)
+        # self.tableWidgetSecond.setSelectionBehavior(QAbstractItemView.SelectRows)
+        # self.tableWidgetSecond.setShowGrid(True)
+        # self.tableWidgetSecond.setGridStyle(Qt.SolidLine)
+        # self.tableWidgetSecond.setSortingEnabled(False)
+        # self.tableWidgetSecond.horizontalHeader().setVisible(False)
+        # self.tableWidgetSecond.horizontalHeader().setCascadingSectionResizes(True)
+        # self.tableWidgetSecond.horizontalHeader().setDefaultSectionSize(200)
+        # self.tableWidgetSecond.horizontalHeader().setStretchLastSection(True)
+        # self.tableWidgetSecond.verticalHeader().setVisible(False)
+        # self.tableWidgetSecond.verticalHeader().setCascadingSectionResizes(False)
+        # self.tableWidgetSecond.verticalHeader().setHighlightSections(False)
+        # self.tableWidgetSecond.verticalHeader().setStretchLastSection(True)
 
         self.button_select = QPushButton(self.row_3)
         self.button_select.setObjectName(u"btn_select")
@@ -1747,7 +1747,7 @@ class Ui_MainWindow(object):
         # self.button.clicked.connect(self.select_all_rows)
 
         # self.verticalLayout_20.addWidget(self.button_select)
-        self.verticalLayout_20.addWidget(self.tableWidgetSecond)
+        # self.verticalLayout_20.addWidget(self.tableWidgetSecond)
         self.stackedWidget.addWidget(self.new_page)
 
         self.verticalLayout_15.addWidget(self.stackedWidget)
@@ -2027,60 +2027,60 @@ class Ui_MainWindow(object):
 
 
 
-        ___qsecondtablewidgetitem = self.tableWidgetSecond.horizontalHeaderItem(0)
-        ___qsecondtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
-        ___qsecondtablewidgetitem1 = self.tableWidgetSecond.horizontalHeaderItem(1)
-        ___qsecondtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
-        ___qsecondtablewidgetitem2 = self.tableWidgetSecond.horizontalHeaderItem(2)
-        ___qsecondtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
-        ___qsecondtablewidgetitem3 = self.tableWidgetSecond.horizontalHeaderItem(3)
-        ___qsecondtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None));
-        ___qsecondtablewidgetitem4 = self.tableWidgetSecond.verticalHeaderItem(0)
-        ___qsecondtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem5 = self.tableWidgetSecond.verticalHeaderItem(1)
-        ___qsecondtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem6 = self.tableWidgetSecond.verticalHeaderItem(2)
-        ___qsecondtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem7 = self.tableWidgetSecond.verticalHeaderItem(3)
-        ___qsecondtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem8 = self.tableWidgetSecond.verticalHeaderItem(4)
-        ___qsecondtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem9 = self.tableWidgetSecond.verticalHeaderItem(5)
-        ___qsecondtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem10 = self.tableWidgetSecond.verticalHeaderItem(6)
-        ___qsecondtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem11 = self.tableWidgetSecond.verticalHeaderItem(7)
-        ___qsecondtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem12 = self.tableWidgetSecond.verticalHeaderItem(8)
-        ___qsecondtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem13 = self.tableWidgetSecond.verticalHeaderItem(9)
-        ___qsecondtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem14 = self.tableWidgetSecond.verticalHeaderItem(10)
-        ___qsecondtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem15 = self.tableWidgetSecond.verticalHeaderItem(11)
-        ___qsecondtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem16 = self.tableWidgetSecond.verticalHeaderItem(12)
-        ___qsecondtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem17 = self.tableWidgetSecond.verticalHeaderItem(13)
-        ___qsecondtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem18 = self.tableWidgetSecond.verticalHeaderItem(14)
-        ___qsecondtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        ___qsecondtablewidgetitem19 = self.tableWidgetSecond.verticalHeaderItem(15)
-        ___qsecondtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-
-        __sortingEnabled = self.tableWidgetSecond.isSortingEnabled()
-        self.tableWidgetSecond.setSortingEnabled(False)
-        ___qsecondtablewidgetitem20 = self.tableWidgetSecond.item(0, 0)
-        ___qsecondtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
-        ___qsecondtablewidgetitem21 = self.tableWidgetSecond.item(0, 1)
-        ___qsecondtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Have to be", None));
-        ___qsecondtablewidgetitem22 = self.tableWidgetSecond.item(0, 2)
-        ___qsecondtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Stock", None));
-        ___qsecondtablewidgetitem23 = self.tableWidgetSecond.item(0, 3)
-        ___qsecondtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
-        ___qsecondtablewidgetitem24 = self.tableWidgetSecond.item(0, 4)
-        ___qsecondtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"Diff up to 10", None));
-        self.tableWidgetSecond.setSortingEnabled(__sortingEnabled)
+        # ___qsecondtablewidgetitem = self.tableWidgetSecond.horizontalHeaderItem(0)
+        # ___qsecondtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
+        # ___qsecondtablewidgetitem1 = self.tableWidgetSecond.horizontalHeaderItem(1)
+        # ___qsecondtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
+        # ___qsecondtablewidgetitem2 = self.tableWidgetSecond.horizontalHeaderItem(2)
+        # ___qsecondtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
+        # ___qsecondtablewidgetitem3 = self.tableWidgetSecond.horizontalHeaderItem(3)
+        # ___qsecondtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None));
+        # ___qsecondtablewidgetitem4 = self.tableWidgetSecond.verticalHeaderItem(0)
+        # ___qsecondtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem5 = self.tableWidgetSecond.verticalHeaderItem(1)
+        # ___qsecondtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem6 = self.tableWidgetSecond.verticalHeaderItem(2)
+        # ___qsecondtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem7 = self.tableWidgetSecond.verticalHeaderItem(3)
+        # ___qsecondtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem8 = self.tableWidgetSecond.verticalHeaderItem(4)
+        # ___qsecondtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem9 = self.tableWidgetSecond.verticalHeaderItem(5)
+        # ___qsecondtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem10 = self.tableWidgetSecond.verticalHeaderItem(6)
+        # ___qsecondtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem11 = self.tableWidgetSecond.verticalHeaderItem(7)
+        # ___qsecondtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem12 = self.tableWidgetSecond.verticalHeaderItem(8)
+        # ___qsecondtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem13 = self.tableWidgetSecond.verticalHeaderItem(9)
+        # ___qsecondtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem14 = self.tableWidgetSecond.verticalHeaderItem(10)
+        # ___qsecondtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem15 = self.tableWidgetSecond.verticalHeaderItem(11)
+        # ___qsecondtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem16 = self.tableWidgetSecond.verticalHeaderItem(12)
+        # ___qsecondtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem17 = self.tableWidgetSecond.verticalHeaderItem(13)
+        # ___qsecondtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem18 = self.tableWidgetSecond.verticalHeaderItem(14)
+        # ___qsecondtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        # ___qsecondtablewidgetitem19 = self.tableWidgetSecond.verticalHeaderItem(15)
+        # ___qsecondtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        #
+        # __sortingEnabled = self.tableWidgetSecond.isSortingEnabled()
+        # self.tableWidgetSecond.setSortingEnabled(False)
+        # ___qsecondtablewidgetitem20 = self.tableWidgetSecond.item(0, 0)
+        # ___qsecondtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
+        # ___qsecondtablewidgetitem21 = self.tableWidgetSecond.item(0, 1)
+        # ___qsecondtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Have to be", None));
+        # ___qsecondtablewidgetitem22 = self.tableWidgetSecond.item(0, 2)
+        # ___qsecondtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Stock", None));
+        # ___qsecondtablewidgetitem23 = self.tableWidgetSecond.item(0, 3)
+        # ___qsecondtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
+        # ___qsecondtablewidgetitem24 = self.tableWidgetSecond.item(0, 4)
+        # ___qsecondtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"Diff up to 10", None));
+        # self.tableWidgetSecond.setSortingEnabled(__sortingEnabled)
 
 
 
