@@ -27,7 +27,11 @@ from mpl_toolkits.mplot3d import Axes3D
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 
-
+class MyGLViewWidget(gl.GLViewWidget):
+    def wheelEvent(self, ev):
+        ev.ignore()
+    def mouseMoveEvent(self, ev):
+        return  # Ignore all mouse moves
 class CustomTableWidget(QTableWidget):
     def __init__(self, *args, **kwargs):
         super(CustomTableWidget, self).__init__(*args, **kwargs)
@@ -725,7 +729,7 @@ class Ui_MainWindow(object):
         self.btn_new.setFont(font)
         self.btn_new.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_new.setLayoutDirection(Qt.LeftToRight)
-        self.btn_new.setStyleSheet(u"background-image: url(images/icons/cil-cells.png);")
+        self.btn_new.setStyleSheet(u"background-image: url(images/icons/cil-dollar.png);")
 
         self.verticalLayout_8.addWidget(self.btn_new)
 
@@ -1106,21 +1110,20 @@ class Ui_MainWindow(object):
         self.verticalLayout111.setSpacing(10)
         self.verticalLayout111.setObjectName(u"verticalLayout111")
         self.verticalLayout111.setContentsMargins(10, 10, 10, 10)
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
-
-        self.gl_view_widget = gl.GLViewWidget(self.home)
-        # self.gl_view_widget.setBackgroundColor('white')
-
-        self.gl_view_widget.setCameraPosition(distance=50)
-
-        data = [30, 20, 50]
 
 
 
 
 
-        self.verticalLayout111.addWidget(self.gl_view_widget)
+
+
+
+
+
+
+
+
+        # self.verticalLayout111.addWidget(self.gl_view_widget)
         self.home.setLayout(self.verticalLayout111)
         self.stackedWidget.addWidget(self.home)
         # self.stackedWidget.addWidget(self._chart_view)
@@ -1726,6 +1729,127 @@ class Ui_MainWindow(object):
         self.verticalLayout_20 = QVBoxLayout(self.new_page)
         self.verticalLayout_20.setObjectName(u"verticalLayout_20")
 
+        self.table_factories = QTableWidget(self.new_page)
+        if (self.table_factories.columnCount() < 3):
+            self.table_factories.setColumnCount(3)
+        # self.tableWidgetSecond.setHorizontalHeaderLabels(CustomHeaderView(self.tableWidgetSecond))
+        __qsecondtablewidgetitem = QTableWidgetItem()
+        self.table_factories.setHorizontalHeaderItem(0, __qsecondtablewidgetitem)
+        __qsecondtablewidgetitem1 = QTableWidgetItem()
+        self.table_factories.setHorizontalHeaderItem(1, __qsecondtablewidgetitem1)
+        __qsecondtablewidgetitem2 = QTableWidgetItem()
+        self.table_factories.setHorizontalHeaderItem(2, __qsecondtablewidgetitem2)
+        # __qsecondtablewidgetitem3? = QTableWidgetItem()
+        # self.table_factories.setHorizontalHeaderItem(3, __qsecondtablewidgetitem3)
+        if (self.table_factories.rowCount() < 19000):
+            self.table_factories.setRowCount(19000)
+
+        __qsecondtablewidgetitem4 = QTableWidgetItem()
+
+        __qsecondtablewidgetitem4.setFont(font4)
+        self.table_factories.setVerticalHeaderItem(0, __qsecondtablewidgetitem4)
+        __qsecondtablewidgetitem5 = QTableWidgetItem()
+        sizePolicy3.setHeightForWidth(self.table_factories.sizePolicy().hasHeightForWidth())
+
+        # Set the width of the second column to 150 pixels
+        # self.table_factories.setColumnWidth(1, 20)
+
+        # Set the width of the third column to 200 pixels
+        # self.table_factories.setColumnWidth(2, 20)
+        self.table_factories.setVerticalHeaderItem(1, __qsecondtablewidgetitem5)
+        __qsecondtablewidgetitem6 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(2, __qsecondtablewidgetitem6)
+        __qsecondtablewidgetitem7 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(3, __qsecondtablewidgetitem7)
+        __qsecondtablewidgetitem8 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(4, __qsecondtablewidgetitem8)
+        __qsecondtablewidgetitem9 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(5, __qsecondtablewidgetitem9)
+        __qsecondtablewidgetitem10 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(6, __qsecondtablewidgetitem10)
+        __qsecondtablewidgetitem11 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(7, __qsecondtablewidgetitem11)
+        __qsecondtablewidgetitem12 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(8, __qsecondtablewidgetitem12)
+        __qsecondtablewidgetitem13 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(9, __qsecondtablewidgetitem13)
+        __qsecondtablewidgetitem14 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(10, __qsecondtablewidgetitem14)
+        __qsecondtablewidgetitem15 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(11, __qsecondtablewidgetitem15)
+        __qsecondtablewidgetitem16 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(12, __qsecondtablewidgetitem16)
+        __qsecondtablewidgetitem17 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(13, __qsecondtablewidgetitem17)
+        __qsecondtablewidgetitem18 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(14, __qsecondtablewidgetitem18)
+        __qsecondtablewidgetitem19 = QTableWidgetItem()
+        self.table_factories.setVerticalHeaderItem(15, __qsecondtablewidgetitem19)
+        __qsecondtablewidgetitem20 = QTableWidgetItem()
+        self.table_factories.setItem(0, 0, __qsecondtablewidgetitem20)
+        __qsecondtablewidgetitem21 = QTableWidgetItem()
+        self.table_factories.setItem(0, 1, __qsecondtablewidgetitem21)
+        __qsecondtablewidgetitem22 = QTableWidgetItem()
+        self.table_factories.setItem(0, 2, __qsecondtablewidgetitem22)
+        self.table_factories.setObjectName(u"tableWidget")
+        # self.table_factories.setSizePolicy(sizePolicy4)
+
+        self.table_factories.setPalette(palette)
+        self.table_factories.setFrameShape(QFrame.NoFrame)
+        self.table_factories.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        # self.table_factories.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.table_factories.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_factories.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table_factories.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_factories.setShowGrid(True)
+        self.table_factories.setGridStyle(Qt.SolidLine)
+        self.table_factories.setSortingEnabled(False)
+        self.table_factories.horizontalHeader().setVisible(False)
+        self.table_factories.horizontalHeader().setCascadingSectionResizes(True)
+        self.table_factories.horizontalHeader().setDefaultSectionSize(200)
+        self.table_factories.horizontalHeader().setStretchLastSection(True)
+        self.table_factories.verticalHeader().setVisible(False)
+        self.table_factories.verticalHeader().setCascadingSectionResizes(False)
+        self.table_factories.verticalHeader().setHighlightSections(False)
+        self.table_factories.verticalHeader().setStretchLastSection(True)
+
+        self.table_factories.setFixedWidth(500)
+        # self.table_factories.setColumnWidth(0, 20)
+        self.table_factories.setColumnWidth(0, 200)
+
+        # Set the width of the second column to 150 pixels
+        self.table_factories.setColumnWidth(1, 120)
+
+        # Set the width of the third column to 200 pixels
+        self.table_factories.setColumnWidth(2, 66)
+        view = gl.GLViewWidget(self.new_page)
+        # view.setAspectLocked(True)
+        view.setCameraPosition(distance=100, azimuth=30)
+        view.setBackgroundColor(1,1,1,1)
+        gl_view = MyGLViewWidget()
+        gl_view.setCameraPosition(distance=5)
+        gl_view.setBackgroundColor((0, 0, 0, 0))
+        gl_view.show()
+        # view.setCameraEnabled(orbit=False)
+        # Define pie chart data and colors
+        data = [5, 35, 40, 40]
+        colors = [
+            (1, 0, 0, 55),
+            (1, 1, 1, 255),
+            (0, 0, 2, 255),
+            (0, 1, 1, 255)
+        ]
+        self.create_3d_pie_chart(data, colors, gl_view)
+        # self.verticalLayout_20.addWidget(gl_view)
+        splitter = QSplitter(Qt.Horizontal)
+        splitter.addWidget(self.table_factories)
+        self.label = QLabel(self.new_page)
+        splitter.addWidget(self.label)
+        splitter.addWidget(gl_view)
+
+        self.verticalLayout_20.addWidget(splitter)
+
+
         self.label = QLabel(self.new_page)
         self.label.setObjectName(u"label")
         self.label.setAlignment(Qt.AlignCenter)
@@ -1747,7 +1871,8 @@ class Ui_MainWindow(object):
         # self.button.clicked.connect(self.select_all_rows)
 
         # self.verticalLayout_20.addWidget(self.button_select)
-        # self.verticalLayout_20.addWidget(self.tableWidgetSecond)
+        # self.verticalLayout_20.addWidget(self.table_factories)
+        # self.verticalLayout_20.addWidget(gl_view)
         self.stackedWidget.addWidget(self.new_page)
 
         self.verticalLayout_15.addWidget(self.stackedWidget)
@@ -1967,8 +2092,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
         ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
-        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None));
+
         ___qtablewidgetitem4 = self.tableWidget.verticalHeaderItem(0)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
         ___qtablewidgetitem5 = self.tableWidget.verticalHeaderItem(1)
@@ -2025,62 +2149,60 @@ class Ui_MainWindow(object):
 
 
 
-
-
-        # ___qsecondtablewidgetitem = self.tableWidgetSecond.horizontalHeaderItem(0)
-        # ___qsecondtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
-        # ___qsecondtablewidgetitem1 = self.tableWidgetSecond.horizontalHeaderItem(1)
-        # ___qsecondtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
-        # ___qsecondtablewidgetitem2 = self.tableWidgetSecond.horizontalHeaderItem(2)
-        # ___qsecondtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
-        # ___qsecondtablewidgetitem3 = self.tableWidgetSecond.horizontalHeaderItem(3)
+        ___qsecondtablewidgetitem = self.table_factories.horizontalHeaderItem(0)
+        ___qsecondtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"0", None));
+        ___qsecondtablewidgetitem1 = self.table_factories.horizontalHeaderItem(1)
+        ___qsecondtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"1", None));
+        ___qsecondtablewidgetitem2 = self.table_factories.horizontalHeaderItem(2)
+        ___qsecondtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"2", None));
+        # ___qsecondtablewidgetitem3 = self.table_factories.horizontalHeaderItem(3)
         # ___qsecondtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"3", None));
-        # ___qsecondtablewidgetitem4 = self.tableWidgetSecond.verticalHeaderItem(0)
+        # ___qsecondtablewidgetitem4 = self.table_factories.verticalHeaderItem(0)
         # ___qsecondtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem5 = self.tableWidgetSecond.verticalHeaderItem(1)
-        # ___qsecondtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem6 = self.tableWidgetSecond.verticalHeaderItem(2)
-        # ___qsecondtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem7 = self.tableWidgetSecond.verticalHeaderItem(3)
-        # ___qsecondtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem8 = self.tableWidgetSecond.verticalHeaderItem(4)
-        # ___qsecondtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem9 = self.tableWidgetSecond.verticalHeaderItem(5)
-        # ___qsecondtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem10 = self.tableWidgetSecond.verticalHeaderItem(6)
-        # ___qsecondtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem11 = self.tableWidgetSecond.verticalHeaderItem(7)
-        # ___qsecondtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem12 = self.tableWidgetSecond.verticalHeaderItem(8)
-        # ___qsecondtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem13 = self.tableWidgetSecond.verticalHeaderItem(9)
-        # ___qsecondtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem14 = self.tableWidgetSecond.verticalHeaderItem(10)
-        # ___qsecondtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem15 = self.tableWidgetSecond.verticalHeaderItem(11)
-        # ___qsecondtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem16 = self.tableWidgetSecond.verticalHeaderItem(12)
-        # ___qsecondtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem17 = self.tableWidgetSecond.verticalHeaderItem(13)
-        # ___qsecondtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem18 = self.tableWidgetSecond.verticalHeaderItem(14)
-        # ___qsecondtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        # ___qsecondtablewidgetitem19 = self.tableWidgetSecond.verticalHeaderItem(15)
-        # ___qsecondtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
-        #
-        # __sortingEnabled = self.tableWidgetSecond.isSortingEnabled()
-        # self.tableWidgetSecond.setSortingEnabled(False)
-        # ___qsecondtablewidgetitem20 = self.tableWidgetSecond.item(0, 0)
-        # ___qsecondtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
-        # ___qsecondtablewidgetitem21 = self.tableWidgetSecond.item(0, 1)
-        # ___qsecondtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Have to be", None));
-        # ___qsecondtablewidgetitem22 = self.tableWidgetSecond.item(0, 2)
-        # ___qsecondtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Stock", None));
-        # ___qsecondtablewidgetitem23 = self.tableWidgetSecond.item(0, 3)
+        ___qsecondtablewidgetitem5 = self.table_factories.verticalHeaderItem(1)
+        ___qsecondtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem6 = self.table_factories.verticalHeaderItem(2)
+        ___qsecondtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem7 = self.table_factories.verticalHeaderItem(3)
+        ___qsecondtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem8 = self.table_factories.verticalHeaderItem(4)
+        ___qsecondtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem9 = self.table_factories.verticalHeaderItem(5)
+        ___qsecondtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem10 = self.table_factories.verticalHeaderItem(6)
+        ___qsecondtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem11 = self.table_factories.verticalHeaderItem(7)
+        ___qsecondtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem12 = self.table_factories.verticalHeaderItem(8)
+        ___qsecondtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem13 = self.table_factories.verticalHeaderItem(9)
+        ___qsecondtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem14 = self.table_factories.verticalHeaderItem(10)
+        ___qsecondtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem15 = self.table_factories.verticalHeaderItem(11)
+        ___qsecondtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem16 = self.table_factories.verticalHeaderItem(12)
+        ___qsecondtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem17 = self.table_factories.verticalHeaderItem(13)
+        ___qsecondtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem18 = self.table_factories.verticalHeaderItem(14)
+        ___qsecondtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+        ___qsecondtablewidgetitem19 = self.table_factories.verticalHeaderItem(15)
+        ___qsecondtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"New Row", None));
+
+        __sortingEnabled = self.table_factories.isSortingEnabled()
+        self.table_factories.setSortingEnabled(False)
+        ___qsecondtablewidgetitem20 = self.table_factories.item(0, 0)
+        ___qsecondtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Factory", None));
+        ___qsecondtablewidgetitem21 = self.table_factories.item(0, 1)
+        ___qsecondtablewidgetitem21.setText(QCoreApplication.translate("MainWindow", u"Total Cost", None));
+        ___qsecondtablewidgetitem22 = self.table_factories.item(0, 2)
+        ___qsecondtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"", None));
+        # ___qsecondtablewidgetitem23 = self.table_factories.item(0, 3)
         # ___qsecondtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
-        # ___qsecondtablewidgetitem24 = self.tableWidgetSecond.item(0, 4)
+        # ___qsecondtablewidgetitem24 = self.table_factories.item(0, 4)
         # ___qsecondtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"Diff up to 10", None));
-        # self.tableWidgetSecond.setSortingEnabled(__sortingEnabled)
+        self.table_factories.setSortingEnabled(__sortingEnabled)
 
 
 
@@ -2092,17 +2214,17 @@ class Ui_MainWindow(object):
         self.version.setText(QCoreApplication.translate("MainWindow", u"Alpha v0.0.1", None))
     # retranslateUi
 
-    def create_3d_pie_chart(self, data, colors):
+    def create_3d_pie_chart(self,data, colors,gl_view, edge_color=(0, 0, 0, 255), ):
         num_segments = len(data)
-        angle_step = 2 * np.pi / num_segments
+        summ = sum(data)
         radius = 1
         height = 0.5  # Height of each pie chart segment
 
+        angle_start = 0
         for i in range(num_segments):
             segment_vertices = []
 
-            angle_start = i * angle_step
-            angle_end = (i + 1) * angle_step
+            angle_end = angle_start + 2 * np.pi * data[i] / summ
 
             # Add bottom center vertex
             segment_vertices.append((0, 0, 0))
@@ -2143,17 +2265,13 @@ class Ui_MainWindow(object):
             mesh_item = gl.GLMeshItem(
                 meshdata=mesh_data,
                 color=colors[i],
+                edge_color=(100, 100, 100, 255),
                 smooth=True,
-                # shader='shaded',
-                # glOptions='additive'
+                shader='shaded'
             )
-            # gl_view.addItem(mesh_item)
-    # def create_button_container(self, i, font):
-    #
-    #
-    #
-    #     return container
+            gl_view.addItem(mesh_item)
 
+            angle_start = angle_end
 
 
 

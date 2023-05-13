@@ -45,6 +45,7 @@ class MainWindow(QMainWindow):
 
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
+        self.price_column = 4
         self.factory_column = 5
         self.a_descr_column = 1
         file = open('variables.json')
@@ -66,14 +67,18 @@ class MainWindow(QMainWindow):
         self.a_number_column = 0
         self.havetb_column = 2
         self.stock_column = 3
+        self.forecolors = {}
         self.dictionary = dict()
         self.dictionary_all_values = dict()
         self.dict_values_factory = []
         self.firstTable = False
         self.secondTable = False
         self.current_page = "home"
-        self.set_factorys  = set()
-
+        self.set_factorys = set()
+        self.buttons_red = {}
+        self.buttons_orange = {}
+        self.buttons_yellow = {}
+        self.factory_keys = []
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
@@ -309,8 +314,25 @@ class MainWindow(QMainWindow):
 
             self.flag_generate_factorys = True
             self.secondTable=False
-            self.LoadExcel(widgets.tableWidget, "global")
+
             self.data["file"] = self.tempaddr
+            self.dictionary_all_values = dict()
+            for i in list(sorted(self.factory_keys)):
+                widget1 = self.findChildren(QWidget, i)
+                for j in widget1:
+                    widgets.verticalLayout_11.removeWidget(j)
+                    j.deleteLater()
+
+
+            self.dict_values_factory = []
+            self.buttons_red = {}
+            self.buttons_orange = {}
+            self.buttons_yellow = {}
+            self.set_factorys = set()
+            self.array_keys = [4]
+            self.another_dict = {}
+            self.dictionary_all_values = {}
+            self.LoadExcel(widgets.tableWidget)
         with open("variables.json", "w") as outfile:
             outfile.write(json.dumps(self.data, indent=4))
     def LoadExcel(self, widget):
@@ -322,7 +344,7 @@ class MainWindow(QMainWindow):
                 if item is not None and row!=0:
                     item.setText("")
                     widget.setRowHidden(row, False)
-        key2_0 = set()
+        self.factory_keys = set()
         if len(self.tempaddr) > 0:
                 arr_of_sheets = (openpyxl.load_workbook(self.tempaddr, read_only=True)).sheetnames
                 Table = openpyxl.load_workbook(self.tempaddr)
@@ -330,11 +352,13 @@ class MainWindow(QMainWindow):
                 a = 0
                 for i in Sheet.iter_rows():
                     if (a != 0):
-                        key2_0.add(int(i[5].value))
+                        self.factory_keys.add(str(i[5].value))
                         self.set_factorys.add(str(i[5].value))
                     a += 1
-                for i in key2_0:
-                    self.another_dict[i] = []
+
+                for i in self.factory_keys:
+                    self.another_dict[str(i)] = []
+                    self.forecolors[str(i)] = []
                 a=0
 
                 for i in Sheet.iter_rows():
@@ -344,6 +368,7 @@ class MainWindow(QMainWindow):
                         descr = str(i[self.a_descr_column].value)
                         havetb = int(i[self.havetb_column].value)
                         stock = int(i[self.stock_column].value)
+                        price = float(i[self.price_column].value)
                         factory = str(i[self.factory_column].value)
                         diff_num = havetb - stock
 
@@ -351,11 +376,11 @@ class MainWindow(QMainWindow):
                         self.values.append(number+" " +descr + " " + factory)
 
                         diff_up_to_10 = int(round((diff_num)/10 + (0.5 if diff_num>=0 else -0.5)))*10
-                        all_values = [number, havetb, stock,diff_num, diff_up_to_10, factory]
+                        all_values = [number, havetb, stock,diff_num, diff_up_to_10, factory, price]
 
                         self.keys_for_dict.append(str(i[0].value))
                         self.dict_values_factory.append(all_values)
-                        self.another_dict[int(i[5].value)].append(all_values)
+                        self.another_dict[factory].append(all_values)
 
                     a+=1
 
@@ -363,9 +388,9 @@ class MainWindow(QMainWindow):
                 self.dictionary_all_values = dict(zip(self.keys_for_dict, self.dict_values_factory))
 
                 if self.flag_generate_factorys == True:
-                    key2_0 = sorted(key2_0)
-                    for i in range(0,len(key2_0)):
-                            name = key2_0.pop(0)
+                    sorted_keys = sorted(self.factory_keys)
+                    for i in range(0,len(sorted_keys)):
+                            name = sorted_keys.pop(0)
                             button = QPushButton(f"{name}")
                             button.setObjectName(f"{name}")
                             button.setMinimumSize(QSize(0, 45))
@@ -376,6 +401,7 @@ class MainWindow(QMainWindow):
                             button.clicked.connect(partial( self.ForButtons,button, widget))
                             widgets.verticalLayout_11.addWidget(button)
                     self.flag_generate_factorys = False
+                    self.generate_table_factorys()
 
         self.TableSorting(widgets.tableWidget, 'Des', 4)
         # widget.sortItems(3, QtCore.Qt.AscendingOrder, 2, 5)
@@ -426,10 +452,10 @@ class MainWindow(QMainWindow):
                 if row_data != []:
                     row_data_list.append(row_data)
         else:
-            for row in range(1, len(self.another_dict[int(self.option)])):
+            for row in range(1, len(self.another_dict[(self.option)])):
                 row_data = []
                 for col in range(widget.columnCount()):
-                        item = self.another_dict[int(self.option)][row]
+                        item = self.another_dict[(self.option)][row]
                         if item != None and col != 0 :
                             row_data.append(item[col])
                         if item != None and col == 0:
@@ -458,6 +484,115 @@ class MainWindow(QMainWindow):
                         break
 
                 widget.setRowHidden(row, empty)
+    def generate_table_factorys(self):
+        widgets.table_factories.setRowCount(1)
+        widgets.table_factories.setRowCount(len(self.another_dict.keys()) + 2)
+        for i in range(1, len(self.another_dict.keys())+1):
+            self.buttons_red[list(self.another_dict.keys())[i-1]] = False
+            self.buttons_orange[list(self.another_dict.keys())[i - 1]] = False
+            self.buttons_yellow[list(self.another_dict.keys())[i - 1]] = False
+            item = QTableWidgetItem()
+            item.setData(QtCore.Qt.DisplayRole, list(self.another_dict.keys())[i-1])
+            item3 = QTableWidgetItem()
+            item2 = QWidget()
+            layout = QHBoxLayout(item2)
+            button1 = QPushButton()
+            button1.setObjectName(f"RedFactory{i}")
+            # Set the button's style sheet
+            button1.setStyleSheet("background-color: red; border-radius: 25px; text-align: center;")
+            button1.setFixedSize(20, 20)
+            button1.clicked.connect(partial(self.total_cost_color,"Red", i))
+            layout.addWidget(button1)
+            button2 = QPushButton()
+            button2.setObjectName(f"OrangeFactory{i}")
+            button2.clicked.connect(partial(self.total_cost_color,"Orange", i))
+            # Set the button's style sheet
+            button2.setStyleSheet("background-color: orange; border-radius: 25px; text-align: center;")
+            button2.setFixedSize(20, 20)
+            layout.addWidget(button2)
+            button3 = QPushButton()
+            button3.setObjectName(f"YellowFactory{i}")
+            button3.clicked.connect(partial(self.total_cost_color, "Yellow", i))
+            # Set the button's style sheet
+            button3.setStyleSheet("background-color: yellow; border-radius: 25px; text-align: center;")
+            button3.setFixedSize(20, 20)
+            layout.addWidget(button3)
+            widgets.table_factories.setCellWidget(i, 2, item2)
+            widgets.table_factories.setItem(i, 0, item)
+            widgets.table_factories.setItem(i, 1, item3)
+
+    def total_cost_color(self, color, row_table):
+
+        # print(self.another_dict[str(list(self.another_dict)[row_table])])
+        # for row in range(1, widgets.table_factories.rowCount()):
+        #     print(row)
+
+            factory_value_row = list(self.another_dict.keys())[row_table-1]
+            if color == "Red":
+                max_value = (10000)
+                min_value =100
+                self.buttons_red[factory_value_row] = not self.buttons_red[factory_value_row]
+                button_clicked_change = self.buttons_red[factory_value_row]
+
+
+            elif color == "Orange":
+                min_value = 50
+                max_value = 100
+                self.buttons_orange[factory_value_row] = not self.buttons_orange[factory_value_row]
+                button_clicked_change = self.buttons_orange[factory_value_row]
+
+            else:
+                min_value = 0
+                max_value=50
+                self.buttons_yellow[factory_value_row] = not self.buttons_yellow[factory_value_row]
+                button_clicked_change = self.buttons_yellow[factory_value_row]
+
+            if color in self.forecolors[factory_value_row]:
+                self.forecolors[factory_value_row].remove(color)
+            else:
+                self.forecolors[factory_value_row].append(color)
+            if len(self.forecolors[factory_value_row]) == 0:
+                forecolor = '#000000'
+            elif len(self.forecolors[factory_value_row]) == 1:
+                forecolor = self.forecolors[factory_value_row][0]
+            elif len(self.forecolors[factory_value_row]) == 2:
+                forecolor = '#0362fc'
+            else:
+                forecolor = '#FFFFFF'
+            print(self.forecolors[factory_value_row])
+            print(forecolor)
+            sum_row = widgets.table_factories.item(row_table, 1)
+            factory_row = widgets.table_factories.item(row_table, 0)
+
+            if sum_row and sum_row.text()!='':
+                sum = float(sum_row.text())
+            else:
+                sum = 0
+            # sum = int(sum_row.text()) if sum_row.text() is not None else 0
+            if factory_row != None:
+                for properties in self.another_dict[factory_row.text()]:
+                    # print(properties)
+                    diff = (properties[1]-properties[2])
+                    if min_value <= diff < max_value:
+                        if button_clicked_change:
+                            sum += round(properties[6] * diff, 1)
+                        else:
+                            sum -= round(properties[6] * diff, 1)
+                print(sum)
+                sum = round(sum,1)
+                if sum == 0:
+                    sum =''
+                sum_row.setData(QtCore.Qt.DisplayRole, sum)
+                sum_row.setForeground(QColor(forecolor))
+                # print("Final summ " + str(sum))
+    def border_color_clicked(self, button, status):
+        if status:
+            style = button.styleSheet()
+            button.setStyleSheet(style + "border: 2px solid green")
+        else:
+            style = button.styleSheet()
+            button.setStyleSheet(style.replace("border: 2px solid green", "border: none"))
+
 
     def colortype_func(self, havetb, stock):
         diff = havetb - stock
