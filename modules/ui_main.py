@@ -1826,10 +1826,10 @@ class Ui_MainWindow(object):
         # view.setAspectLocked(True)
         view.setCameraPosition(distance=100, azimuth=30)
         view.setBackgroundColor(1,1,1,1)
-        gl_view = MyGLViewWidget()
-        gl_view.setCameraPosition(distance=5)
-        gl_view.setBackgroundColor((0, 0, 0, 0))
-        gl_view.show()
+        self.gl_view = MyGLViewWidget()
+        self.gl_view.setCameraPosition(distance=5)
+        self.gl_view.setBackgroundColor((0, 0, 0, 0))
+        # gl_view.show()
         # view.setCameraEnabled(orbit=False)
         # Define pie chart data and colors
         data = [5, 35, 40, 40]
@@ -1839,15 +1839,15 @@ class Ui_MainWindow(object):
             (0, 0, 2, 255),
             (0, 1, 1, 255)
         ]
-        self.create_3d_pie_chart(data, colors, gl_view)
+        self.create_3d_pie_chart(data, colors, self.gl_view)
         # self.verticalLayout_20.addWidget(gl_view)
-        splitter = QSplitter(Qt.Horizontal)
-        splitter.addWidget(self.table_factories)
+        self.splitter = QSplitter(Qt.Horizontal)
+        self.splitter.addWidget(self.table_factories)
         self.label = QLabel(self.new_page)
-        splitter.addWidget(self.label)
-        splitter.addWidget(gl_view)
+        self.splitter.addWidget(self.label)
+        # self.splitter.addWidget(self.gl_view)
 
-        self.verticalLayout_20.addWidget(splitter)
+        self.verticalLayout_20.addWidget(self.splitter)
 
 
         self.label = QLabel(self.new_page)
@@ -2217,6 +2217,8 @@ class Ui_MainWindow(object):
     def create_3d_pie_chart(self,data, colors,gl_view, edge_color=(0, 0, 0, 255), ):
         num_segments = len(data)
         summ = sum(data)
+        print(data)
+        print(summ)
         radius = 1
         height = 0.5  # Height of each pie chart segment
 
@@ -2265,7 +2267,7 @@ class Ui_MainWindow(object):
             mesh_item = gl.GLMeshItem(
                 meshdata=mesh_data,
                 color=colors[i],
-                edge_color=(100, 100, 100, 255),
+                edge_color=(240, 100, 0, 255),
                 smooth=True,
                 shader='shaded'
             )
