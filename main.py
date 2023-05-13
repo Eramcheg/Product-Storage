@@ -22,6 +22,7 @@ from functools import partial
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
 from modules import *
+from modules.ui_main import MyGLViewWidget
 from widgets import *
 import json
 from xls2xlsx import XLS2XLSX
@@ -66,6 +67,7 @@ class MainWindow(QMainWindow):
         self.values = []
         self.a_number_column = 0
         self.havetb_column = 2
+        self.full_costs = {"global":0}
         self.stock_column = 3
         self.forecolors = {}
         self.dictionary = dict()
@@ -75,10 +77,22 @@ class MainWindow(QMainWindow):
         self.secondTable = False
         self.current_page = "home"
         self.set_factorys = set()
+        self.colors_chart = [
+            (1, 0, 0, 55),
+            (1, 0.65, 0, 255),
+            (1, 1, 0, 255),
+            (0, 1, 0, 255),
+            (1, 1, 1, 255)
+        ]
+        self.gl_view = MyGLViewWidget()
+        self.gl_view.setCameraPosition(distance=5, elevation=30, azimuth=40)
+        self.gl_view.setBackgroundColor((0, 0, 0, 0))
         self.buttons_red = {}
+        self.data_costs = {"global":[0,0,0,0,0]}
         self.buttons_orange = {}
         self.buttons_yellow = {}
         self.factory_keys = []
+
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
@@ -164,6 +178,13 @@ class MainWindow(QMainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
         self.option = "global"
+        data = [70, 35, 40, 40]
+
+        widgets.create_3d_pie_chart(data, self.colors_chart, self.gl_view)
+        widgets.splitter.addWidget(self.gl_view)
+        # self.LoadExcel(widgets.tableWidget)
+
+
         # self.TableSorting(widgets.tableWidget, 'DESC', 3, "global")
 
 
@@ -278,7 +299,7 @@ class MainWindow(QMainWindow):
             elif widget.objectName() == 'btn_adjustments':
                 widget.setVisible(self.current_page == 'home' )
             elif widget.objectName() in list(self.set_factorys) or widget.objectName() == "btn_global":
-                widget.setVisible( self.current_page == 'widgets')
+                widget.setVisible( self.current_page == 'widgets' or self.current_page == 'new')
 
         extrapMenuLayout = self.ui.topMenus.layout()
         for i in range(extrapMenuLayout.count()):
@@ -328,6 +349,8 @@ class MainWindow(QMainWindow):
             self.buttons_red = {}
             self.buttons_orange = {}
             self.buttons_yellow = {}
+            self.full_costs = {"global":0 }
+            self.data_costs = {"global":[0,0,0,0,0]}
             self.set_factorys = set()
             self.array_keys = [4]
             self.another_dict = {}
@@ -359,9 +382,15 @@ class MainWindow(QMainWindow):
                 for i in self.factory_keys:
                     self.another_dict[str(i)] = []
                     self.forecolors[str(i)] = []
+                    self.data_costs[str(i)] = [0,0,0,0,0]
+                    self.full_costs[str(i)] = 0
                 a=0
 
                 for i in Sheet.iter_rows():
+                    if a == 0:
+                        print(str(i[0].value))
+                    if a == 1:
+                        print(str(i[0].value) + " " + str(i[1].value))
                     if(a!=0):
 
                         number = str(i[self.a_number_column].value)
@@ -371,6 +400,29 @@ class MainWindow(QMainWindow):
                         price = float(i[self.price_column].value)
                         factory = str(i[self.factory_column].value)
                         diff_num = havetb - stock
+                        if diff_num> 0:
+                            self.full_costs[factory] += round(diff_num * price,1)
+                            self.full_costs["global"] += round(diff_num * price, 1)
+                        else:
+                            self.full_costs[factory] += round(diff_num * price*(-1), 1)
+                            self.full_costs["global"] += round(diff_num * price*(-1), 1)
+
+                        match diff_num:
+                            case diff_num if diff_num >= 100:
+                                self.data_costs[factory][0] += round(price * diff_num, 1)
+                                self.data_costs["global"][0] += round(price * diff_num, 1)
+                            case diff_num if 50 <= diff_num < 100:
+                                self.data_costs[factory][1] += round(price * diff_num, 1)
+                                self.data_costs["global"][1] += round(price * diff_num, 1)
+                            case diff_num if 0 < diff_num < 50:
+                                self.data_costs[factory][2] += round(price * diff_num, 1)
+                                self.data_costs["global"][2] += round(price * diff_num, 1)
+                            case diff_num if (-1 * havetb) <= diff_num <= 0:
+                                self.data_costs[factory][3] += round(price * diff_num * -1, 1)
+                                self.data_costs["global"][3] += round(price * diff_num * -1, 1)
+                            case _:
+                                self.data_costs[factory][4] += round(price * diff_num * -1, 1)
+                                self.data_costs["global"][4] += round(price * diff_num * -1, 1)
 
                         self.keys.append(number)
                         self.values.append(number+" " +descr + " " + factory)
@@ -381,14 +433,26 @@ class MainWindow(QMainWindow):
                         self.keys_for_dict.append(str(i[0].value))
                         self.dict_values_factory.append(all_values)
                         self.another_dict[factory].append(all_values)
+                        if a==1:
+                            print(self.keys_for_dict)
 
                     a+=1
-
+                # print(self.data_costs['FACTORY 10'])
                 self.dictionary = dict(zip(self.keys,self.values))
                 self.dictionary_all_values = dict(zip(self.keys_for_dict, self.dict_values_factory))
+                # print(self.dictionary_all_values)
 
                 if self.flag_generate_factorys == True:
                     sorted_keys = sorted(self.factory_keys)
+                    # for i in range(len(self.data_costs[self.option])):
+                    #     self.data_costs[self.option][i] = round(
+                    #         100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
+                    #     print(self.option)
+                    #     # print(self.data_costs)
+                    # self.gl_view.clear()
+                    # self.gl_view.clear()
+                    # widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
+
                     for i in range(0,len(sorted_keys)):
                             name = sorted_keys.pop(0)
                             button = QPushButton(f"{name}")
@@ -402,13 +466,21 @@ class MainWindow(QMainWindow):
                             widgets.verticalLayout_11.addWidget(button)
                     self.flag_generate_factorys = False
                     self.generate_table_factorys()
-
+        for i in range(len(self.data_costs[self.option])):
+            self.data_costs[self.option][i] = round(100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
+            # print(self.option)
+            # print(self.full_costs[self.option])
+            # print(self.option)
+            # print(self.data_costs)
+        self.gl_view.clear()
+        widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
         self.TableSorting(widgets.tableWidget, 'Des', 4)
         # widget.sortItems(3, QtCore.Qt.AscendingOrder, 2, 5)
 
     def ForButtons(self, button,widget):
         self.array_keys = []
         self.option = button.objectName()
+
         self.LoadExcel(widget)
         self.Must_have()
         self.reset_selected_factory()
@@ -416,6 +488,14 @@ class MainWindow(QMainWindow):
         self.sorting_design(widgets.button8)
         style = button.styleSheet()
         button.setStyleSheet(style+ "\n"+"background-color: rgb(29, 34, 38)")
+        # for i in range(len(self.data_costs[self.option])):
+        #     self.data_costs[self.option][i] = round(
+        #         100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
+        #     print(self.option)
+        #     # print(self.data_costs)
+        # self.gl_view.clear()
+        # widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
+
     def reset_selected_factory(self):
         for i in self.set_factorys:
             my_button = self.findChild(QtWidgets.QPushButton, i)
@@ -424,8 +504,9 @@ class MainWindow(QMainWindow):
         widget.setRowCount(1)
         widget.setRowCount(len(self.dictionary_all_values)+1)
         row_data_list = []
-
-
+        # print(self.array_keys)
+        # print(sort_column)
+        # print(method)
         if method == 'Asc':
             sort_column = sort_column
         else:
@@ -440,7 +521,7 @@ class MainWindow(QMainWindow):
             self.array_keys.append(sort_column)
 
         if self.option == "global":
-            for row in range(1, len(self.dictionary_all_values)):
+            for row in range(0, len(self.dictionary_all_values)):
                 row_data = []
                 for col in range(widget.columnCount()):
                         item = list(self.dictionary_all_values.values())[row]
@@ -451,8 +532,9 @@ class MainWindow(QMainWindow):
                             row_data.append((item[col]))
                 if row_data != []:
                     row_data_list.append(row_data)
+
         else:
-            for row in range(1, len(self.another_dict[(self.option)])):
+            for row in range(0, len(self.another_dict[(self.option)])):
                 row_data = []
                 for col in range(widget.columnCount()):
                         item = self.another_dict[(self.option)][row]
@@ -487,6 +569,9 @@ class MainWindow(QMainWindow):
     def generate_table_factorys(self):
         widgets.table_factories.setRowCount(1)
         widgets.table_factories.setRowCount(len(self.another_dict.keys()) + 2)
+
+
+
         for i in range(1, len(self.another_dict.keys())+1):
             self.buttons_red[list(self.another_dict.keys())[i-1]] = False
             self.buttons_orange[list(self.another_dict.keys())[i - 1]] = False
@@ -501,18 +586,18 @@ class MainWindow(QMainWindow):
             # Set the button's style sheet
             button1.setStyleSheet("background-color: red; border-radius: 25px; text-align: center;")
             button1.setFixedSize(20, 20)
-            button1.clicked.connect(partial(self.total_cost_color,"Red", i))
+            button1.clicked.connect(partial(self.total_cost_color,"Red", i, button1))
             layout.addWidget(button1)
             button2 = QPushButton()
             button2.setObjectName(f"OrangeFactory{i}")
-            button2.clicked.connect(partial(self.total_cost_color,"Orange", i))
+            button2.clicked.connect(partial(self.total_cost_color,"Orange", i, button2))
             # Set the button's style sheet
             button2.setStyleSheet("background-color: orange; border-radius: 25px; text-align: center;")
             button2.setFixedSize(20, 20)
             layout.addWidget(button2)
             button3 = QPushButton()
             button3.setObjectName(f"YellowFactory{i}")
-            button3.clicked.connect(partial(self.total_cost_color, "Yellow", i))
+            button3.clicked.connect(partial(self.total_cost_color, "Yellow", i, button3))
             # Set the button's style sheet
             button3.setStyleSheet("background-color: yellow; border-radius: 25px; text-align: center;")
             button3.setFixedSize(20, 20)
@@ -521,7 +606,7 @@ class MainWindow(QMainWindow):
             widgets.table_factories.setItem(i, 0, item)
             widgets.table_factories.setItem(i, 1, item3)
 
-    def total_cost_color(self, color, row_table):
+    def total_cost_color(self, color, row_table, button):
 
         # print(self.another_dict[str(list(self.another_dict)[row_table])])
         # for row in range(1, widgets.table_factories.rowCount()):
@@ -546,6 +631,9 @@ class MainWindow(QMainWindow):
                 max_value=50
                 self.buttons_yellow[factory_value_row] = not self.buttons_yellow[factory_value_row]
                 button_clicked_change = self.buttons_yellow[factory_value_row]
+
+            self.border_color_clicked(button, button_clicked_change)
+    # print(self.another_dict[str(list(self.another_dict)[row_table])])
 
             if color in self.forecolors[factory_value_row]:
                 self.forecolors[factory_value_row].remove(color)
@@ -588,10 +676,11 @@ class MainWindow(QMainWindow):
     def border_color_clicked(self, button, status):
         if status:
             style = button.styleSheet()
-            button.setStyleSheet(style + "border: 2px solid green")
+            button.setStyleSheet(style + "border: 2px solid magenta")
         else:
             style = button.styleSheet()
-            button.setStyleSheet(style.replace("border: 2px solid green", "border: none"))
+            style = style.replace("border: 2px solid magenta", "")
+            button.setStyleSheet(style)
 
 
     def colortype_func(self, havetb, stock):
