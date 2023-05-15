@@ -26,7 +26,80 @@ from mpl_toolkits.mplot3d import Axes3D
 # import plotly.offline as pyo
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
-
+# class Splitter(QSplitter):
+#     def __init__(self, *args, **kwargs):
+#         super(Splitter, self).__init__(*args, **kwargs)
+#         self.min_orange = QColor(51, 33, 0).getRgbF()[:3]
+#         self.max_orange = QColor(255, 165, 0).getRgbF()[:3]
+#         self.min_red = QColor(51, 0, 0).getRgbF()[:3]
+#         self.max_red = QColor(255, 165, 0).getRgbF()[:3]
+#         self.min_yellow = QColor(51, 51, 0).getRgbF()[:3]
+#         self.max_yellow = QColor(255, 255, 0).getRgbF()[:3]
+#         self.min_green = QColor(0, 51, 0).getRgbF()[:3]
+#         self.max_green = QColor(0, 255, 0).getRgbF()[:3]
+#         self.min_white = QColor(51, 51, 51).getRgbF()[:3]
+#         self.max_white = QColor(255, 255, 255).getRgbF()[:3]
+#         self.labelHello = QLabel(self)
+#         layout = QVBoxLayout(self)
+#         layout.addWidget(self.labelHello)
+#     def mousePressEvent(self, event):
+#         print('fewfewf')
+#         # Get the global mouse position
+#         globalPos = QCursor.pos()
+#
+#         # Create a QPixmap, and render the screen content into it
+#         screen = QApplication.primaryScreen()
+#         if screen is not None:
+#             pixmap = screen.grabWindow(0, globalPos.x(), globalPos.y(), 1, 1)
+#         else:
+#             return
+#
+#         # Get the color of the pixel under the mouse cursor
+#         color = QColor(pixmap.toImage().pixelColor(0, 0)).getRgbF()[:3]
+#
+#         if color[0] == color[1] == color[2]:  # white
+#             if self.is_white(color):
+#                 self.labelHello.setText('White')
+#
+#         elif color[0] == color[1] != 0 and color[2] == 0:  # yellow
+#             if self.is_yellow(color):
+#                 self.labelHello.setText('Yellow')
+#         elif color[1] == color[2] == 0 and color[0] != 0:  # red
+#             if self.is_red(color):
+#                 self.labelHello.setText('Red')
+#
+#         elif color[1] != 0 and color[0] == color[2] == 0:  # green
+#             if self.is_green(color):
+#                 self.labelHello.setText('Green')
+#
+#         elif color[1] != color[0] and color[1] != 0 and round(color[0] / color[1], 2) == 1.55:
+#             if self.is_orange(color):
+#                 self.labelHello.setText('Orange')
+#         else:
+#             self.labelHello.setText('')
+#
+#         # Check if the color is within the range of orange
+#         # if self.is_orange(color):
+#         #     self.label.setText('Orange')
+#         # else:
+#         #     self.label.setText('')
+#         # print("SOM")
+#         super().mouseMoveEvent(event)
+#
+#     def is_orange(self, color):
+#         return all(self.min_orange[i] <= color[i] <= self.max_orange[i] for i in range(3))
+#
+#     def is_yellow(self, color):
+#         return all(self.min_yellow[i] <= color[i] <= self.max_yellow[i] for i in range(3))
+#
+#     def is_red(self, color):
+#         return all(self.min_red[i] <= color[i] <= self.max_red[i] for i in range(3))
+#
+#     def is_green(self, color):
+#         return all(self.min_green[i] <= color[i] <= self.max_green[i] for i in range(3))
+#
+#     def is_white(self, color):
+#         return all(self.min_white[i] <= color[i] <= self.max_white[i] for i in range(3))
 class MyGLViewWidget(gl.GLViewWidget):
     def wheelEvent(self, ev):
         ev.ignore()
@@ -1842,11 +1915,14 @@ class Ui_MainWindow(object):
         self.create_3d_pie_chart(data, colors, self.gl_view)
         # self.verticalLayout_20.addWidget(gl_view)
         self.splitter = QSplitter(Qt.Horizontal)
+        self.widget1 = QWidget()
+        self.layout_splitter = QVBoxLayout(self.widget1)
         self.splitter.addWidget(self.table_factories)
-        self.label = QLabel(self.new_page)
-        self.splitter.addWidget(self.label)
-        # self.splitter.addWidget(self.gl_view)
-
+        # self.labelHello = QLabel(self.new_page)
+        # self.labelHello.setText("Hello World")
+        # self.layout_splitter.addWidget(self.labelHello)
+        # self.layout_splitter.addWidget(self.gl_view)
+        # self.splitter.addWidget(self.widget1)
         self.verticalLayout_20.addWidget(self.splitter)
 
 

@@ -36,6 +36,7 @@ os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
 # SET AS GLOBAL WIDGETS
 # ///////////////////////////////////////////////////////////////
 widgets = None
+
 class NumericItem(QtWidgets.QTableWidgetItem):
     def __lt__(self, other):
         return ((self.data(QtCore.Qt.UserRole)) <
@@ -43,11 +44,24 @@ class NumericItem(QtWidgets.QTableWidgetItem):
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-
+        # widgets.new_page.setMouseTracking(True)
+        # self.setMouseTracking(True)
+        # self.installEventFilter(self)
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
+        self.min_orange = QColor(51, 33, 0).getRgbF()[:3]
+        self.max_orange = QColor(255, 165, 0).getRgbF()[:3]
+        self.min_red = QColor(51, 0, 0).getRgbF()[:3]
+        self.max_red = QColor(255, 165, 0).getRgbF()[:3]
+        self.min_yellow = QColor(51, 51, 0).getRgbF()[:3]
+        self.max_yellow = QColor(255, 255, 0).getRgbF()[:3]
+        self.min_green = QColor(0, 51, 0).getRgbF()[:3]
+        self.max_green = QColor(0, 255, 0).getRgbF()[:3]
+        self.min_white = QColor(51, 51, 51).getRgbF()[:3]
+        self.max_white = QColor(255, 255, 255).getRgbF()[:3]
         self.price_column = 4
         self.factory_column = 5
+        self.mouse_position = None
         self.a_descr_column = 1
         file = open('variables.json')
         self.data = json.load(file)
@@ -92,7 +106,9 @@ class MainWindow(QMainWindow):
         self.buttons_orange = {}
         self.buttons_yellow = {}
         self.factory_keys = []
-
+        # self.detector = ColorDetector()
+        self.setMouseTracking(True)  # Enable mouse tracking
+        # self.detector.show()
         # USE CUSTOM TITLE BAR | USE AS "False" FOR MAC OR LINUX
         # ///////////////////////////////////////////////////////////////
         Settings.ENABLE_CUSTOM_TITLE_BAR = True
@@ -146,6 +162,8 @@ class MainWindow(QMainWindow):
                          widgets.button5, widgets.button6, widgets.button7, widgets.button8, widgets.button9, widgets.button10]
         self.sorting_design(widgets.button8)
         self.already_created = False
+        self.labelHello =  QLabel('Hello World', widgets.new_page)
+        self.labelHello.move(100,100)
 
         self.another_dict = {}
         # EXTRA LEFT BOX
@@ -164,6 +182,7 @@ class MainWindow(QMainWindow):
         # ///////////////////////////////////////////////////////////////
         useCustomTheme = False
         themeFile = "themes\py_dracula_light.qss"
+
         self.array_keys = [4]
         # SET THEME AND HACKS
         if useCustomTheme:
@@ -175,6 +194,7 @@ class MainWindow(QMainWindow):
 
         # SET HOME PAGE AND SELECT MENU
         # ///////////////////////////////////////////////////////////////
+
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
         self.option = "global"
@@ -191,6 +211,9 @@ class MainWindow(QMainWindow):
     # BUTTONS CLICK
     # Post here your functions for clicked buttons
     # ///////////////////////////////////////////////////////////////
+    # def mousePressEvent(self, event):
+    #     print('fewfewf')
+    #     # Get the global mouse position
 
     def sorting_design(self, button):
             btnName = button.objectName()
@@ -218,6 +241,7 @@ class MainWindow(QMainWindow):
 
         # SHOW WIDGETS PAGE
         if btnName == "btn_widgets":
+            self.reset_selected_factory()
             widgets.stackedWidget.setCurrentWidget(widgets.widgets)
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
@@ -229,6 +253,7 @@ class MainWindow(QMainWindow):
 
         # SHOW NEW PAGE
         if btnName == "btn_new":
+            self.reset_selected_factory()
             widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
             UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
@@ -270,12 +295,18 @@ class MainWindow(QMainWindow):
             self.reset_button_style()
 
         if btnName == "btn_global":
+
             self.reset_selected_factory()
-            self.array_keys=[]
+            self.option = "global"
+            if self.current_page == 'widgets':
+                self.array_keys=[]
+                self.LoadExcel(widgets.tableWidget)
+            elif self.current_page == 'new':
+                self.gl_view.clear()
+                widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
             style = btn.styleSheet()
             btn.setStyleSheet(style + "\n" + "background-color: rgb(29, 34, 38)")
-            self.option = "global"
-            self.LoadExcel(widgets.tableWidget)
+
             # self.TableSorting(widgets.tableWidget, 'DESC', 3)
 
 
@@ -468,33 +499,26 @@ class MainWindow(QMainWindow):
                     self.generate_table_factorys()
         for i in range(len(self.data_costs[self.option])):
             self.data_costs[self.option][i] = round(100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
-            # print(self.option)
-            # print(self.full_costs[self.option])
-            # print(self.option)
-            # print(self.data_costs)
-        self.gl_view.clear()
-        widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
+
+
         self.TableSorting(widgets.tableWidget, 'Des', 4)
         # widget.sortItems(3, QtCore.Qt.AscendingOrder, 2, 5)
 
     def ForButtons(self, button,widget):
         self.array_keys = []
         self.option = button.objectName()
-
-        self.LoadExcel(widget)
+        if self.current_page == 'widgets':
+            self.LoadExcel(widget)
+        elif self.current_page == 'new':
+            self.gl_view.clear()
+            widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
         self.Must_have()
         self.reset_selected_factory()
         widgets.btn_global.setStyleSheet((widgets.btn_global.styleSheet()).replace("background-color: rgb(29, 34, 38)", "") )
         self.sorting_design(widgets.button8)
         style = button.styleSheet()
         button.setStyleSheet(style+ "\n"+"background-color: rgb(29, 34, 38)")
-        # for i in range(len(self.data_costs[self.option])):
-        #     self.data_costs[self.option][i] = round(
-        #         100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
-        #     print(self.option)
-        #     # print(self.data_costs)
-        # self.gl_view.clear()
-        # widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
+
 
     def reset_selected_factory(self):
         for i in self.set_factorys:
@@ -504,9 +528,6 @@ class MainWindow(QMainWindow):
         widget.setRowCount(1)
         widget.setRowCount(len(self.dictionary_all_values)+1)
         row_data_list = []
-        # print(self.array_keys)
-        # print(sort_column)
-        # print(method)
         if method == 'Asc':
             sort_column = sort_column
         else:
@@ -607,10 +628,6 @@ class MainWindow(QMainWindow):
             widgets.table_factories.setItem(i, 1, item3)
 
     def total_cost_color(self, color, row_table, button):
-
-        # print(self.another_dict[str(list(self.another_dict)[row_table])])
-        # for row in range(1, widgets.table_factories.rowCount()):
-        #     print(row)
 
             factory_value_row = list(self.another_dict.keys())[row_table-1]
             if color == "Red":
@@ -787,11 +804,73 @@ class MainWindow(QMainWindow):
         # PRINT MOUSE EVENTS
         if event.buttons() == Qt.LeftButton:
             print('Mouse click: LEFT CLICK')
+
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
+        globalPos = QCursor.pos()
+        self.mouse_position = event.pos()
+
+        # Create a QPixmap, and render the screen content into it
+        screen = QApplication.primaryScreen()
+        if screen is not None:
+            pixmap = screen.grabWindow(0, globalPos.x(), globalPos.y(), 1, 1)
+        else:
+            return
+        self.labelHello.move(event.pos())
+        # Get the color of the pixel under the mouse cursor
+        color = QColor(pixmap.toImage().pixelColor(0, 0)).getRgbF()[:3]
+
+        if color[0] == color[1] == color[2]:  # white
+            if self.is_white(color):
+                self.labelHello.setText('White')
+
+        elif color[0] == color[1] != 0 and color[2] == 0:  # yellow
+            if self.is_yellow(color):
+                self.labelHello.setText('Yellow')
+        elif color[1] == color[2] == 0 and color[0] != 0:  # red
+            if self.is_red(color):
+                self.labelHello.setText('Red')
+
+        elif color[1] != 0 and color[0] == color[2] == 0:  # green
+            if self.is_green(color):
+                self.labelHello.setText('Green')
+
+        elif color[1] != color[0] and color[1] != 0 and 1.52 <= round(color[0] / color[1], 2) <= 1.56:
+            if self.is_orange(color):
+                self.labelHello.setText('Orange')
+        else:
+            self.labelHello.setText('')
+        self.labelHello.move(event.pos() - QPoint(70, 70))
+        self.update()
+
+        super().mouseMoveEvent(event)
+
+    def paintEvent(self, event):
+        if self.mouse_position is not None:
+            painter = QPainter(self)
+            pen = QPen(QColor(0, 0, 0))  # Black color pen
+            pen.setWidth(3)
+            painter.setPen(pen)
+            painter.drawLine(self.mouse_position, self.mouse_position + QPoint(50, 0))
+
+    def is_orange(self, color):
+        return all(self.min_orange[i] <= color[i] <= self.max_orange[i] for i in range(3))
+
+    def is_yellow(self, color):
+        return all(self.min_yellow[i] <= color[i] <= self.max_yellow[i] for i in range(3))
+
+    def is_red(self, color):
+        return all(self.min_red[i] <= color[i] <= self.max_red[i] for i in range(3))
+
+    def is_green(self, color):
+        return all(self.min_green[i] <= color[i] <= self.max_green[i] for i in range(3))
+
+    def is_white(self, color):
+        return all(self.min_white[i] <= color[i] <= self.max_white[i] for i in range(3))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("icon.ico"))
     window = MainWindow()
+    # window.setMouseTracking(True)
     sys.exit(app.exec())
