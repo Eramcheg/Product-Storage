@@ -49,6 +49,11 @@ class MainWindow(QMainWindow):
         # self.installEventFilter(self)
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
+        self.is_authorized = False
+        self.accounts = {"admin": "admin1234"}
+
+        self.lines = []
+        self.pen = QPen(Qt.black)
         self.min_orange = QColor(51, 33, 0).getRgbF()[:3]
         self.max_orange = QColor(255, 165, 0).getRgbF()[:3]
         self.min_red = QColor(51, 0, 0).getRgbF()[:3]
@@ -77,6 +82,8 @@ class MainWindow(QMainWindow):
         for col in range(5):
             item = widgets.tableWidget.item(0, col)
             item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
+        widgets.btn_widgets.setVisible(False)
+        widgets.btn_new.setVisible(False)
         self.keys = []
         self.values = []
         self.a_number_column = 0
@@ -158,12 +165,58 @@ class MainWindow(QMainWindow):
         widgets.button10.clicked.connect(self.buttonClick)
         widgets.btn_global.clicked.connect(self.buttonClick)
         widgets.button_reset.clicked.connect(self.buttonClick)
+        widgets.login_button.clicked.connect(self.buttonClick)
         self.buttonarray = [widgets.button1, widgets.button2, widgets.button3, widgets.button4,
                          widgets.button5, widgets.button6, widgets.button7, widgets.button8, widgets.button9, widgets.button10]
         self.sorting_design(widgets.button8)
         self.already_created = False
         self.labelHello =  QLabel('Hello World', widgets.new_page)
+
+        self.labelHello.setWordWrap(True)
+        self.labelHello.setMinimumHeight(60)
         self.labelHello.move(100,100)
+        legend_list = QListWidget(widgets.new_page)
+        legend_list.setStyleSheet("background-color: #252930; border: none;")
+        legend_list.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        # Create a dictionary mapping colors to labels
+        label_colors = {
+            "red": "Difference > 100",
+            "orange": "Difference > 50",
+            "yellow": "Difference > 0",
+            "green": "In stock > have to be",
+            "white": "In stock >> have to be"
+        }
+
+        # Add items to the legend list with labels and colors
+        for color_name, label_text in label_colors.items():
+            item = QListWidgetItem(legend_list)
+            item_widget = QWidget()
+            item_layout = QVBoxLayout(item_widget)
+
+            color_label = QLabel(widgets.new_page)
+            color_label.setFixedWidth(20)
+            color = QColor(color_name)
+            color_label.setStyleSheet(f"background-color: {color.name()};")
+
+            text_label = QLabel(label_text, widgets.new_page)
+            text_label.setFont(QFont("Arial", 10))
+            Qw = QWidget()
+            ql = QHBoxLayout(Qw)
+            ql.addWidget(color_label)
+            ql.addWidget(text_label)
+            Qw.setLayout(ql)
+            item_layout.addWidget(Qw)
+
+            item_layout.setContentsMargins(0, 0, 0, 0)
+            item_widget.setLayout(item_layout)
+
+            item.setSizeHint(item_widget.sizeHint())
+            legend_list.addItem(item)
+            legend_list.setItemWidget(item, item_widget)
+
+        # Set the legend list to align top-right
+
 
         self.another_dict = {}
         # EXTRA LEFT BOX
@@ -199,9 +252,24 @@ class MainWindow(QMainWindow):
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
         self.option = "global"
         data = [70, 35, 40, 40]
-
+        # spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         widgets.create_3d_pie_chart(data, self.colors_chart, self.gl_view)
-        widgets.splitter.addWidget(self.gl_view)
+        qw = QWidget(widgets.new_page)
+        ql = QVBoxLayout(qw)
+
+        ql.addWidget(legend_list, alignment=Qt.AlignTop | Qt.AlignRight)
+        # ql.addWidget(self.gl_view)
+        # ql.addWidget(legend_list, alignment=Qt.AlignBottom | Qt.AlignRight)
+        # widgets.layout_splitter.addWidget(self.gl_view)
+        qw.setLayout(ql)
+
+        widgets.layout_splitter.addWidget(self.gl_view, stretch=5)
+        widgets.layout_splitter.addWidget(qw, stretch=1)
+
+
+        # Set the legend list to align top-right
+
+        # widgets.splitter.addWidget(qw)
         # self.LoadExcel(widgets.tableWidget)
 
 
@@ -263,7 +331,22 @@ class MainWindow(QMainWindow):
             #     self.secondTable=True
             self.current_page = "new"
             self.Must_have()
+        if btnName == "loginButton":
+            username = widgets.username_input.text()
+            password = widgets.password_input.text()
+            if username in self.accounts and password == self.accounts[username]:
+                self.is_authorized = True
+                widgets.btn_widgets.setVisible(True)
+                widgets.btn_new.setVisible(True)
+                widgets.login_button.setVisible(False)
+                widgets.password_input.setVisible(False)
+                widgets.username_input.setVisible(False)
+                widgets.labelLogin.setVisible(False)
+                widgets.labelPassword.setVisible(False)
+                widgets.label_auth.setText(f"Authorization completed!\nWelcome back, {username}!")
 
+            else:
+                widgets.username_input.setText("INVALID DATA!")
         if btnName == "btn_save":
             print("Save BTN clicked!")
         if btnName == "pushButton1":
@@ -475,15 +558,6 @@ class MainWindow(QMainWindow):
 
                 if self.flag_generate_factorys == True:
                     sorted_keys = sorted(self.factory_keys)
-                    # for i in range(len(self.data_costs[self.option])):
-                    #     self.data_costs[self.option][i] = round(
-                    #         100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
-                    #     print(self.option)
-                    #     # print(self.data_costs)
-                    # self.gl_view.clear()
-                    # self.gl_view.clear()
-                    # widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
-
                     for i in range(0,len(sorted_keys)):
                             name = sorted_keys.pop(0)
                             button = QPushButton(f"{name}")
@@ -498,7 +572,7 @@ class MainWindow(QMainWindow):
                     self.flag_generate_factorys = False
                     self.generate_table_factorys()
         for i in range(len(self.data_costs[self.option])):
-            self.data_costs[self.option][i] = round(100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
+           self.data_costs[self.option][i] = round(float(self.data_costs[self.option][i]), 1)#100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
 
 
         self.TableSorting(widgets.tableWidget, 'Des', 4)
@@ -804,54 +878,90 @@ class MainWindow(QMainWindow):
         # PRINT MOUSE EVENTS
         if event.buttons() == Qt.LeftButton:
             print('Mouse click: LEFT CLICK')
+            start_point = event.pos()
 
+            # Create the end point 20 pixels up
+            end_point = QPoint(start_point.x(), start_point.y() - 20)
+
+            # Create a line between the start and end points
+            line = QLine(start_point, end_point)
+
+            # Add the line to the list of lines to be drawn
+            self.lines.append(line)
+            # Draw all lines
+        self.update()
         if event.buttons() == Qt.RightButton:
             print('Mouse click: RIGHT CLICK')
         globalPos = QCursor.pos()
         self.mouse_position = event.pos()
 
+
         # Create a QPixmap, and render the screen content into it
         screen = QApplication.primaryScreen()
+        print(self.height())
         if screen is not None:
             pixmap = screen.grabWindow(0, globalPos.x(), globalPos.y(), 1, 1)
         else:
             return
-        self.labelHello.move(event.pos())
+
         # Get the color of the pixel under the mouse cursor
         color = QColor(pixmap.toImage().pixelColor(0, 0)).getRgbF()[:3]
 
         if color[0] == color[1] == color[2]:  # white
             if self.is_white(color):
-                self.labelHello.setText('White')
+                self.labelHello.setText(f"{round(100*self.data_costs[self.option][4]/self.full_costs[self.option], 1)}% \u20AC{round(self.data_costs[self.option][4],1)} "  )
+                self.labelHello.move(QPoint(event.pos().x()- 150, self.height() / 8 * 4.6))
+                self.labelHello.setStyleSheet("color: white; font-family: Arial; font-size: 16px; border: 0.5px solid white; padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;")
 
         elif color[0] == color[1] != 0 and color[2] == 0:  # yellow
             if self.is_yellow(color):
-                self.labelHello.setText('Yellow')
+                self.labelHello.setText(f"{round(100*self.data_costs[self.option][2]/self.full_costs[self.option],1)}% \u20AC{round(self.data_costs[self.option][2],1)}" )
+                self.labelHello.move(QPoint(event.pos().x()- 150, self.height()/8 * 1.8))
+                self.labelHello.setStyleSheet(
+                    "color: yellow; font-family: Arial; font-size: 16px; border: 0.5px solid yellow; padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;")
+
         elif color[1] == color[2] == 0 and color[0] != 0:  # red
             if self.is_red(color):
-                self.labelHello.setText('Red')
+                self.labelHello.setText(
+                    f"{round(100 * self.data_costs[self.option][0] / self.full_costs[self.option],1)}% \u20AC{round(self.data_costs[self.option][0], 1)}")
+                self.labelHello.move(QPoint(event.pos().x() - 150, self.height()/8 * 4.6))
+                self.labelHello.setStyleSheet(
+                    "color: #fa020f; font-family: Arial; font-size: 16px; border: 0.5px solid red; padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;")
+
 
         elif color[1] != 0 and color[0] == color[2] == 0:  # green
             if self.is_green(color):
-                self.labelHello.setText('Green')
+                self.labelHello.setText(
+                    f"{round(100 * self.data_costs[self.option][3] / self.full_costs[self.option],1)}% \u20AC{round(self.data_costs[self.option][3], 1)}")
+                self.labelHello.move(QPoint(event.pos().x()- 150, self.height()/8 * 1.8 ))
+                self.labelHello.setStyleSheet(
+                    "color: #15b02f;font-family: Arial; font-size: 16px; border: 0.5px solid green; padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;")
+
 
         elif color[1] != color[0] and color[1] != 0 and 1.52 <= round(color[0] / color[1], 2) <= 1.56:
             if self.is_orange(color):
-                self.labelHello.setText('Orange')
+                self.labelHello.setText(
+                    f"{round(100 * self.data_costs[self.option][1] / self.full_costs[self.option],1)}% \u20AC{round(self.data_costs[self.option][1], 1)}")
+
+                self.labelHello.move(QPoint(event.pos().x() - 150, self.height()/8 * 4.6))
+                self.labelHello.setStyleSheet(
+                    "color: orange; font-family: Arial; font-size: 16px; border: 0.5px solid orange; padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;")
+
         else:
             self.labelHello.setText('')
-        self.labelHello.move(event.pos() - QPoint(70, 70))
-        self.update()
+            self.labelHello.setStyleSheet("border: none")
+
+
 
         super().mouseMoveEvent(event)
 
     def paintEvent(self, event):
-        if self.mouse_position is not None:
-            painter = QPainter(self)
-            pen = QPen(QColor(0, 0, 0))  # Black color pen
-            pen.setWidth(3)
-            painter.setPen(pen)
-            painter.drawLine(self.mouse_position, self.mouse_position + QPoint(50, 0))
+        painter = QPainter(self)
+
+        # Draw all lines
+        for line in self.lines:
+            painter.setPen(self.pen)
+            painter.drawLine(line)
 
     def is_orange(self, color):
         return all(self.min_orange[i] <= color[i] <= self.max_orange[i] for i in range(3))
