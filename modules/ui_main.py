@@ -1175,7 +1175,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-#         self.home.setStyleSheet(u"background-image: url(:/images/images/images/PyDracula_vertical.png);\n"
+        self.home.setStyleSheet(u"background-image: url(images/images/logo_oliverweber.png);\n")
 # "background-position: center;\n"
 # "background-repeat: no-repeat;")
 
@@ -1183,8 +1183,13 @@ class Ui_MainWindow(object):
         self.verticalLayout111.setSpacing(10)
         self.verticalLayout111.setObjectName(u"verticalLayout111")
         self.verticalLayout111.setContentsMargins(10, 10, 10, 10)
+        self.verticalLayout111.setAlignment(Qt.AlignCenter)
         self.widg = QWidget()
         self.lay = QVBoxLayout(self.widg)
+        # self.inner_layout = QVBoxLayout(self.widg)
+        # self.auth_list = QListWidget(self.widg)
+        # self.auth_list.setStyleSheet("background-color: #252930; border: none;")
+        # self.auth_list.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.label_auth = QLabel("Authorization\n")
         self.label_auth.setStyleSheet("font-family: Arial; font-size: 26px;")
         self.label_auth.setGeometry(50, 50, 200, 30)
@@ -1226,7 +1231,8 @@ class Ui_MainWindow(object):
         self.lay.addWidget(self.password_input)
         self.lay.addWidget(self.login_button)
         self.lay.setAlignment(Qt.AlignCenter)
-        self.widg.setLayout(self.lay)
+        self.widg.setStyleSheet("background-color: #252930; border-radius:50%;")
+        self.widg.setFixedSize(500, 500)
 
         self.verticalLayout111.addWidget(self.widg)
 
@@ -2158,8 +2164,8 @@ class Ui_MainWindow(object):
         self.btn_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
         self.btn_widgets.setText(QCoreApplication.translate("MainWindow", u"Catalog", None))
         self.btn_new.setText(QCoreApplication.translate("MainWindow", u"Stocks", None))
-        self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
-        self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
+        self.toggleLeftBox.setText(QCoreApplication.translate("MainWindow", u"Functions menu", None))
+        self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Functions menu", None))
 #if QT_CONFIG(tooltip)
         self.extraCloseColumnBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close left box", None))
 #endif // QT_CONFIG(tooltip)

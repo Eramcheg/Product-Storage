@@ -64,8 +64,8 @@ class MainWindow(QMainWindow):
         self.max_green = QColor(0, 255, 0).getRgbF()[:3]
         self.min_white = QColor(51, 51, 51).getRgbF()[:3]
         self.max_white = QColor(255, 255, 255).getRgbF()[:3]
-        self.price_column = 4
-        self.factory_column = 5
+        self.price_column = 5
+        self.factory_column = 6
         self.mouse_position = None
         self.a_descr_column = 1
         file = open('variables.json')
@@ -87,9 +87,12 @@ class MainWindow(QMainWindow):
         self.keys = []
         self.values = []
         self.a_number_column = 0
+        # centerPoint = QGuiApplication.screens()[0].geometry().center()
+        # widgets.widg.move(centerPoint - self.frameGeometry().center())
         self.havetb_column = 2
         self.full_costs = {"global":0}
         self.stock_column = 3
+        self.ordercolumn=4
         self.forecolors = {}
         self.dictionary = dict()
         self.dictionary_all_values = dict()
@@ -166,6 +169,7 @@ class MainWindow(QMainWindow):
         widgets.btn_global.clicked.connect(self.buttonClick)
         widgets.button_reset.clicked.connect(self.buttonClick)
         widgets.login_button.clicked.connect(self.buttonClick)
+        widgets.btn_logout.clicked.connect(self.buttonClick)
         self.buttonarray = [widgets.button1, widgets.button2, widgets.button3, widgets.button4,
                          widgets.button5, widgets.button6, widgets.button7, widgets.button8, widgets.button9, widgets.button10]
         self.sorting_design(widgets.button8)
@@ -376,7 +380,18 @@ class MainWindow(QMainWindow):
             self.array_keys = [-4]
             self.TableSorting(widgets.tableWidget, 'Desc', 4)
             self.reset_button_style()
-
+        if btnName == "btn_logout":
+            widgets.btn_widgets.setVisible(False)
+            widgets.password_input.setText('')
+            widgets.username_input.setText('')
+            widgets.btn_new.setVisible(False)
+            self.is_authorized = False
+            widgets.login_button.setVisible(True)
+            widgets.password_input.setVisible(True)
+            widgets.username_input.setVisible(True)
+            widgets.labelLogin.setVisible(True)
+            widgets.labelPassword.setVisible(True)
+            widgets.label_auth.setText(f"Authorization")
         if btnName == "btn_global":
 
             self.reset_selected_factory()
@@ -392,7 +407,7 @@ class MainWindow(QMainWindow):
 
             # self.TableSorting(widgets.tableWidget, 'DESC', 3)
 
-
+        self.Must_have()
         # PRINT BTN NAME
         print(f'Button "{btnName}" pressed!')
     def reset_button_style(self, button = None):
@@ -402,24 +417,49 @@ class MainWindow(QMainWindow):
         else:
             button.setStyleSheet("""""")
     def Must_have(self):
-        extraTopMenuLayout = self.ui.extraTopMenu.layout()
-        for i in range(extraTopMenuLayout.count()):
-            widget = extraTopMenuLayout.itemAt(i).widget()
-            # print(widget.objectName() in self.set_factorys)
-            if widget.objectName() == 'btn_share':
-                widget.setVisible(self.current_page == 'home' )
-            elif widget.objectName() == 'btn_more':
-                widget.setVisible(self.current_page == 'home' )
-            elif widget.objectName() == 'btn_adjustments':
-                widget.setVisible(self.current_page == 'home' )
-            elif widget.objectName() in list(self.set_factorys) or widget.objectName() == "btn_global":
-                widget.setVisible( self.current_page == 'widgets' or self.current_page == 'new')
+            extraTopMenuLayout = self.ui.extraTopMenu.layout()
 
-        extrapMenuLayout = self.ui.topMenus.layout()
-        for i in range(extrapMenuLayout.count()):
-            widget = extrapMenuLayout.itemAt(i).widget()
-            if widget.objectName() == 'btn_export':
-                widget.setVisible(self.current_page == 'widgets')
+            for i in range(extraTopMenuLayout.count()):
+                widget = extraTopMenuLayout.itemAt(i).widget()
+                # print(widget.objectName() in self.set_factorys)
+                if widget.objectName() == 'btn_share':
+                    if self.is_authorized:
+                        widget.setVisible(self.current_page == 'home' )
+                    else:
+                        widget.setVisible(False)
+                elif widget.objectName() == 'btn_more':
+                    if self.is_authorized:
+                        widget.setVisible(self.current_page == 'home' )
+                    else:
+                        widget.setVisible(False)
+                elif widget.objectName() == 'btn_adjustments':
+                    if self.is_authorized:
+                        widget.setVisible(self.current_page == 'home' )
+                    else:
+                        widget.setVisible(False)
+                elif widget.objectName() in list(self.set_factorys) or widget.objectName() == "btn_global":
+                    widget.setVisible( self.current_page == 'widgets' or self.current_page == 'new')
+
+            extrapMenuLayout = self.ui.topMenus.layout()
+            for i in range(extrapMenuLayout.count()):
+                widget = extrapMenuLayout.itemAt(i).widget()
+                if widget.objectName() == 'btn_export':
+                    widget.setVisible(self.current_page == 'widgets')
+                if widget.objectName() == 'btn_logout':
+                    if self.is_authorized:
+                        widget.setVisible(True)
+                    else:
+                        widget.setVisible(False)
+                if widget.objectName() == 'btn_print':
+                    if self.is_authorized:
+                        widget.setVisible(True)
+                    else:
+                        widget.setVisible(False)
+                if widget.objectName() == 'btn_message':
+                    if self.is_authorized:
+                        widget.setVisible(True)
+                    else:
+                        widget.setVisible(False)
 
     def openCloseLeftBox(self, page):
             UIFunctions.toggleLeftBox(self, True, page)
@@ -511,9 +551,12 @@ class MainWindow(QMainWindow):
                         descr = str(i[self.a_descr_column].value)
                         havetb = int(i[self.havetb_column].value)
                         stock = int(i[self.stock_column].value)
+                        ordered = int(i[self.ordercolumn].value)
                         price = float(i[self.price_column].value)
                         factory = str(i[self.factory_column].value)
                         diff_num = havetb - stock
+                        to_order = diff_num - ordered
+
                         if diff_num> 0:
                             self.full_costs[factory] += round(diff_num * price,1)
                             self.full_costs["global"] += round(diff_num * price, 1)
