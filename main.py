@@ -18,6 +18,7 @@ import sys
 import os
 import platform
 from functools import partial
+from io import BytesIO
 
 # IMPORT / GUI AND MODULES AND WIDGETS
 # ///////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ import json
 from xls2xlsx import XLS2XLSX
 import openpyxl
 from openpyxl.styles import PatternFill, Color
-
+from openpyxl_image_loader import SheetImageLoader
 from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import Qt
 os.environ["QT_FONT_DPI"] = "96" # FIX Problem for High DPI and Scale above 100%
@@ -49,8 +50,18 @@ class MainWindow(QMainWindow):
         # self.installEventFilter(self)
         # SET AS GLOBAL WIDGETS
         # ///////////////////////////////////////////////////////////////
+        self.image_column = 8
+        self.preorder_column = 7
+        self.factory_column = 6
+        self.price_column = 5
+        self.ordercolumn = 4
+        self.stock_column = 3
+        self.havetb_column = 2
+        self.a_descr_column = 1
+        self.a_number_column = 0
         self.is_authorized = False
-        self.accounts = {"admin": "admin1234"}
+
+        self.accounts = {"admin": "aDmin9119", "ordering":"ftPv1r4t"}
 
         self.lines = []
         self.pen = QPen(Qt.black)
@@ -64,10 +75,9 @@ class MainWindow(QMainWindow):
         self.max_green = QColor(0, 255, 0).getRgbF()[:3]
         self.min_white = QColor(51, 51, 51).getRgbF()[:3]
         self.max_white = QColor(255, 255, 255).getRgbF()[:3]
-        self.price_column = 5
-        self.factory_column = 6
+
         self.mouse_position = None
-        self.a_descr_column = 1
+
         file = open('variables.json')
         self.data = json.load(file)
         print(self.data["file"])
@@ -79,20 +89,20 @@ class MainWindow(QMainWindow):
 
         global widgets
         widgets = self.ui
-        for col in range(5):
+        for col in range(6):
             item = widgets.tableWidget.item(0, col)
             item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
         widgets.btn_widgets.setVisible(False)
         widgets.btn_new.setVisible(False)
         self.keys = []
         self.values = []
-        self.a_number_column = 0
+
         # centerPoint = QGuiApplication.screens()[0].geometry().center()
         # widgets.widg.move(centerPoint - self.frameGeometry().center())
-        self.havetb_column = 2
+
         self.full_costs = {"global":0}
-        self.stock_column = 3
-        self.ordercolumn=4
+        self.factories = {}
+
         self.forecolors = {}
         self.dictionary = dict()
         self.dictionary_all_values = dict()
@@ -101,6 +111,8 @@ class MainWindow(QMainWindow):
         self.secondTable = False
         self.current_page = "home"
         self.set_factorys = set()
+        widgets.buttonPIE.setVisible(False)
+        widgets.buttonTABLES.setVisible(False)
         self.colors_chart = [
             (1, 0, 0, 55),
             (1, 0.65, 0, 255),
@@ -166,15 +178,22 @@ class MainWindow(QMainWindow):
         widgets.button8.clicked.connect(self.buttonClick)
         widgets.button9.clicked.connect(self.buttonClick)
         widgets.button10.clicked.connect(self.buttonClick)
+        widgets.button11.clicked.connect(self.buttonClick)
+        widgets.button12.clicked.connect(self.buttonClick)
         widgets.btn_global.clicked.connect(self.buttonClick)
         widgets.button_reset.clicked.connect(self.buttonClick)
         widgets.login_button.clicked.connect(self.buttonClick)
         widgets.btn_logout.clicked.connect(self.buttonClick)
+        widgets.buttonTABLES.clicked.connect(self.buttonClick)
+        widgets.buttonPIE.clicked.connect(self.buttonClick)
+        self.lablearray = [widgets.label1, widgets.label2, widgets.label3,
+                              widgets.label4, widgets.label5, widgets.label6 ]
+        widgets.label5.setText("Sort priority: 1")
         self.buttonarray = [widgets.button1, widgets.button2, widgets.button3, widgets.button4,
-                         widgets.button5, widgets.button6, widgets.button7, widgets.button8, widgets.button9, widgets.button10]
-        self.sorting_design(widgets.button8)
+                         widgets.button5, widgets.button6, widgets.button7, widgets.button8, widgets.button9, widgets.button10, widgets.button11, widgets.button12]
+        self.sorting_design(widgets.button10)
         self.already_created = False
-        self.labelHello =  QLabel('Hello World', widgets.new_page)
+        self.labelHello =  QLabel(' ', widgets.new_page)
 
         self.labelHello.setWordWrap(True)
         self.labelHello.setMinimumHeight(60)
@@ -223,6 +242,7 @@ class MainWindow(QMainWindow):
 
 
         self.another_dict = {}
+
         # EXTRA LEFT BOX
 
 
@@ -240,7 +260,7 @@ class MainWindow(QMainWindow):
         useCustomTheme = False
         themeFile = "themes\py_dracula_light.qss"
 
-        self.array_keys = [4]
+        self.array_keys = [5]
         # SET THEME AND HACKS
         if useCustomTheme:
             # LOAD AND APPLY STYLE
@@ -257,7 +277,7 @@ class MainWindow(QMainWindow):
         self.option = "global"
         data = [70, 35, 40, 40]
         # spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        widgets.create_3d_pie_chart(data, self.colors_chart, self.gl_view)
+        # widgets.create_3d_pie_chart(data, self.colors_chart, self.gl_view)
         qw = QWidget(widgets.new_page)
         ql = QVBoxLayout(qw)
 
@@ -269,7 +289,10 @@ class MainWindow(QMainWindow):
 
         widgets.layout_splitter.addWidget(self.gl_view, stretch=5)
         widgets.layout_splitter.addWidget(qw, stretch=1)
-
+        if self.tempaddr != "":
+            self.reloadExcel()
+            self.gl_view.clear()
+            widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
 
         # Set the legend list to align top-right
 
@@ -290,6 +313,8 @@ class MainWindow(QMainWindow):
     def sorting_design(self, button):
             btnName = button.objectName()
             num = 0
+            casual_num = int(btnName[-1])
+
             if "Asc" in btnName:
                 num = int(btnName[-1]) * 2 - 1
             elif "Desc" in btnName:
@@ -312,7 +337,27 @@ class MainWindow(QMainWindow):
             self.Must_have()
 
         # SHOW WIDGETS PAGE
-        if btnName == "btn_widgets":
+        if btnName == "tablesButton":
+            self.reset_selected_factory()
+            widgets.stackedWidget.setCurrentWidget(widgets.widgets)
+            UIFunctions.resetStyle(self, "btn_widgets")
+            widgets.btn_widgets.setStyleSheet(UIFunctions.selectMenu(widgets.btn_widgets.styleSheet()))
+            if self.dictionary == {} or self.firstTable == False:
+                self.LoadExcel(widgets.tableWidget)
+                self.firstTable = True
+            self.current_page = "widgets"
+            self.Must_have()
+        if btnName == "PIEbutton":
+            self.reset_selected_factory()
+            widgets.stackedWidget.setCurrentWidget(widgets.new_page)  # SET PAGE
+            UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
+            # btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
+            UIFunctions.resetStyle(self, "btn_new")
+            widgets.btn_new.setStyleSheet(UIFunctions.selectMenu(widgets.btn_new.styleSheet()))
+
+            self.current_page = "new"
+            self.Must_have()
+        if btnName == "btn_widgets" :
             self.reset_selected_factory()
             widgets.stackedWidget.setCurrentWidget(widgets.widgets)
             UIFunctions.resetStyle(self, btnName)
@@ -324,15 +369,11 @@ class MainWindow(QMainWindow):
             self.Must_have()
 
         # SHOW NEW PAGE
-        if btnName == "btn_new":
+        if btnName == "btn_new" :
             self.reset_selected_factory()
             widgets.stackedWidget.setCurrentWidget(widgets.new_page) # SET PAGE
             UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
-            # if self.dictionary.keys() == {}:
-            # if self.secondTable == False:
-            #     self.LoadExcel(widgets.tableWidgetSecond)
-            #     self.secondTable=True
             self.current_page = "new"
             self.Must_have()
         if btnName == "loginButton":
@@ -347,6 +388,8 @@ class MainWindow(QMainWindow):
                 widgets.username_input.setVisible(False)
                 widgets.labelLogin.setVisible(False)
                 widgets.labelPassword.setVisible(False)
+                widgets.buttonTABLES.setVisible(True)
+                widgets.buttonPIE.setVisible(True)
                 widgets.label_auth.setText(f"Authorization completed!\nWelcome back, {username}!")
 
             else:
@@ -359,28 +402,71 @@ class MainWindow(QMainWindow):
             self.Export_Rows()
         if btnName == "btn_select":
             selection_range = widgets.tableWidget.selectAll()
-        if btnName in ["AscButton1","AscButton2","AscButton3","AscButton4", "AscButton5"] :
+        if btnName in ["AscButton1","AscButton2","AscButton3","AscButton4", "AscButton5", "AscButton6"] :
             self.sorting_design(btn)
             column = int(btnName[-1])
+            priority = 1
             if column not in self.array_keys:
                 self.TableSorting(widgets.tableWidget, 'Asc', column)
+                for i in range(len(self.lablearray)):
+                    if i == column - 1:
+                        self.lablearray[i].setText(f"Sort priority: {self.array_keys.index(column) + 1}")
             else:
+                for i in range(len(self.lablearray)):
+                    if i == column - 1:
+                        priority = int(self.lablearray[i].text()[-1])
+                for i in range(len(self.lablearray)):
+                    if i == column - 1:
+                        self.lablearray[i].setText("")
+                    else:
+                        text = self.lablearray[i].text()
+                        if text != "":
+                            print(text)
+                            print(priority)
+                            if int(text[-1]) > int(priority):
+                                self.lablearray[i].setText(f"Sort priority: {int(text[-1]) - 1}")
                 self.TableSorting(widgets.tableWidget, 'Asc', column)
                 self.reset_button_style(btn)
 
-        if btnName in ["DescButton1", "DescButton2", "DescButton3", "DescButton4", "DescButton5"]:
+        if btnName in ["DescButton1", "DescButton2", "DescButton3", "DescButton4", "DescButton5", "DescButton6"]:
             self.sorting_design(btn)
             column = int(btnName[-1])
+            priority = 1
             if column*-1 not in self.array_keys:
                 self.TableSorting(widgets.tableWidget, 'Desc', column)
+                for i in range(len(self.lablearray)):
+                    if i == column-1:
+                        self.lablearray[i].setText(f"Sort priority: {self.array_keys.index(-1*column) +1}")
             else:
+                for i in range(len(self.lablearray)):
+                    if i == column - 1:
+                        priority = self.lablearray[i].text()[-1]
+                for i in range(len(self.lablearray)):
+                    if i == column-1:
+                        self.lablearray[i].setText("")
+                    else:
+                        text = self.lablearray[i].text()
+                        if text!="":
+                            print(text)
+                            print(priority)
+                            if int(text[-1]) > int(priority):
+                                self.lablearray[i].setText(f"Sort priority: {int(text[-1]) - 1}")
                 self.TableSorting(widgets.tableWidget, 'Desc', column)
                 self.reset_button_style(btn)
+
         if btnName == "btn_reset":
-            self.array_keys = [-4]
-            self.TableSorting(widgets.tableWidget, 'Desc', 4)
+            for i in range(len(self.lablearray)):
+                    self.lablearray[i].setText("")
+            self.array_keys = [-5]
+            self.TableSorting(widgets.tableWidget, 'Desc', 5)
             self.reset_button_style()
         if btnName == "btn_logout":
+            widgets.stackedWidget.setCurrentWidget(widgets.home)
+            UIFunctions.resetStyle(self, btnName)
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
+            self.current_page = "home"
+            self.Must_have()
+
             widgets.btn_widgets.setVisible(False)
             widgets.password_input.setText('')
             widgets.username_input.setText('')
@@ -392,6 +478,8 @@ class MainWindow(QMainWindow):
             widgets.labelLogin.setVisible(True)
             widgets.labelPassword.setVisible(True)
             widgets.label_auth.setText(f"Authorization")
+            widgets.buttonPIE.setVisible(False)
+            widgets.buttonTABLES.setVisible(False)
         if btnName == "btn_global":
 
             self.reset_selected_factory()
@@ -486,32 +574,36 @@ class MainWindow(QMainWindow):
                 x2x = XLS2XLSX(self.tempaddr)
                 x2x.to_xlsx(self.tempaddr + 'x')
                 self.tempaddr += 'x'
+            self.reloadExcel()
 
-            self.flag_generate_factorys = True
-            self.secondTable=False
-
-            self.data["file"] = self.tempaddr
-            self.dictionary_all_values = dict()
-            for i in list(sorted(self.factory_keys)):
-                widget1 = self.findChildren(QWidget, i)
-                for j in widget1:
-                    widgets.verticalLayout_11.removeWidget(j)
-                    j.deleteLater()
-
-
-            self.dict_values_factory = []
-            self.buttons_red = {}
-            self.buttons_orange = {}
-            self.buttons_yellow = {}
-            self.full_costs = {"global":0 }
-            self.data_costs = {"global":[0,0,0,0,0]}
-            self.set_factorys = set()
-            self.array_keys = [4]
-            self.another_dict = {}
-            self.dictionary_all_values = {}
-            self.LoadExcel(widgets.tableWidget)
         with open("variables.json", "w") as outfile:
             outfile.write(json.dumps(self.data, indent=4))
+    def reloadExcel(self):
+        self.flag_generate_factorys = True
+        self.secondTable = False
+
+        self.data["file"] = self.tempaddr
+        self.dictionary_all_values = dict()
+        for i in list(sorted(self.factory_keys)):
+            widget1 = self.findChildren(QWidget, i)
+            for j in widget1:
+                widgets.verticalLayout_11.removeWidget(j)
+                j.deleteLater()
+        self.firstTable = True
+        self.dict_values_factory = []
+        self.buttons_red = {}
+        self.buttons_orange = {}
+        self.buttons_yellow = {}
+        self.full_costs = {"global": 0}
+        self.data_costs = {"global": [0, 0, 0, 0, 0]}
+        self.set_factorys = set()
+        self.array_keys = [5]
+        self.another_dict = {}
+        self.dictionary_all_values = {}
+
+        self.LoadExcel(widgets.tableWidget)
+        self.gl_view.clear()
+        widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
     def LoadExcel(self, widget):
 
         for row in range(widget.rowCount()):
@@ -526,11 +618,12 @@ class MainWindow(QMainWindow):
                 arr_of_sheets = (openpyxl.load_workbook(self.tempaddr, read_only=True)).sheetnames
                 Table = openpyxl.load_workbook(self.tempaddr)
                 Sheet = Table[arr_of_sheets[0]]
+                image_loader = SheetImageLoader(Sheet)
                 a = 0
                 for i in Sheet.iter_rows():
                     if (a != 0):
-                        self.factory_keys.add(str(i[5].value))
-                        self.set_factorys.add(str(i[5].value))
+                        self.factory_keys.add(str(i[self.factory_column].value))
+                        self.set_factorys.add(str(i[self.factory_column].value))
                     a += 1
 
                 for i in self.factory_keys:
@@ -553,39 +646,67 @@ class MainWindow(QMainWindow):
                         stock = int(i[self.stock_column].value)
                         ordered = int(i[self.ordercolumn].value)
                         price = float(i[self.price_column].value)
+                        image = QPixmap()
+                        # print(image_loader.get(f"H{a+1}"))
+                        try:
+                            image = image_loader.get(f"I{a + 1}")
+                            bytes = BytesIO()
+                            image.save(bytes, format='JPEG')
+                            bytes.seek(0)
+                            pixmap = QPixmap()
+                            pixmap.loadFromData(bytes.getvalue())
+                            pixmap = pixmap.scaled(120, 150, Qt.AspectRatioMode.KeepAspectRatio)
+                        except:
+                            image = QImage("images/images/white.png")
+                            pixmap = QPixmap.fromImage(image)
+                            pixmap = pixmap.scaled(120, 150, Qt.AspectRatioMode.KeepAspectRatio)
+
+                        # print(image)
+                        # # image = image.scaled(100, 100, )
+                        #
+                        # # Convert QPixmap to QImage for saving to bytes
+                        # # image_in_bytes = QImage(image)
+                        # bytes = BytesIO()
+                        # # buffer = QBuffer(bytes)
+                        # # buffer.open(QIODevice.WriteOnly)
+                        # # buffer.open(QIODevice.WriteOnly)
+                        # # image_in_bytes.save(buffer, "JPEG")
+                        # image.save(bytes, format='JPEG')
+                        # bytes.seek(0)
                         factory = str(i[self.factory_column].value)
-                        diff_num = havetb - stock
-                        to_order = diff_num - ordered
-
-                        if diff_num> 0:
-                            self.full_costs[factory] += round(diff_num * price,1)
-                            self.full_costs["global"] += round(diff_num * price, 1)
+                        to_order = havetb - stock - ordered
+                        # pixmap = QPixmap()
+                        # pixmap.loadFromData(bytes.getvalue())
+                        # pixmap = pixmap.scaled(120,150, Qt.AspectRatioMode.KeepAspectRatio)
+                        if to_order > 0:
+                            self.full_costs[factory] += round(to_order * price,1)
+                            self.full_costs["global"] += round(to_order * price, 1)
                         else:
-                            self.full_costs[factory] += round(diff_num * price*(-1), 1)
-                            self.full_costs["global"] += round(diff_num * price*(-1), 1)
+                            self.full_costs[factory] += round(to_order * price*(-1), 1)
+                            self.full_costs["global"] += round(to_order * price*(-1), 1)
 
-                        match diff_num:
-                            case diff_num if diff_num >= 100:
-                                self.data_costs[factory][0] += round(price * diff_num, 1)
-                                self.data_costs["global"][0] += round(price * diff_num, 1)
-                            case diff_num if 50 <= diff_num < 100:
-                                self.data_costs[factory][1] += round(price * diff_num, 1)
-                                self.data_costs["global"][1] += round(price * diff_num, 1)
-                            case diff_num if 0 < diff_num < 50:
-                                self.data_costs[factory][2] += round(price * diff_num, 1)
-                                self.data_costs["global"][2] += round(price * diff_num, 1)
-                            case diff_num if (-1 * havetb) <= diff_num <= 0:
-                                self.data_costs[factory][3] += round(price * diff_num * -1, 1)
-                                self.data_costs["global"][3] += round(price * diff_num * -1, 1)
+                        match to_order:
+                            case to_order if to_order >= 100:
+                                self.data_costs[factory][0] += round(price * to_order, 1)
+                                self.data_costs["global"][0] += round(price * to_order, 1)
+                            case to_order if 50 <= to_order < 100:
+                                self.data_costs[factory][1] += round(price * to_order, 1)
+                                self.data_costs["global"][1] += round(price * to_order, 1)
+                            case to_order if 0 < to_order < 50:
+                                self.data_costs[factory][2] += round(price * to_order, 1)
+                                self.data_costs["global"][2] += round(price * to_order, 1)
+                            case to_order if (-1 * havetb) <= to_order <= 0:
+                                self.data_costs[factory][3] += round(price * to_order * -1, 1)
+                                self.data_costs["global"][3] += round(price * to_order * -1, 1)
                             case _:
-                                self.data_costs[factory][4] += round(price * diff_num * -1, 1)
-                                self.data_costs["global"][4] += round(price * diff_num * -1, 1)
+                                self.data_costs[factory][4] += round(price * to_order * -1, 1)
+                                self.data_costs["global"][4] += round(price * to_order * -1, 1)
 
                         self.keys.append(number)
                         self.values.append(number+" " +descr + " " + factory)
 
-                        diff_up_to_10 = int(round((diff_num)/10 + (0.5 if diff_num>=0 else -0.5)))*10
-                        all_values = [number, havetb, stock,diff_num, diff_up_to_10, factory, price]
+                        diff_up_to_10 = int(round((to_order)/10 + (0.5 if to_order>=0 else -0.5)))*10
+                        all_values = [number, havetb, stock, ordered,to_order, diff_up_to_10,  factory, price, pixmap]
 
                         self.keys_for_dict.append(str(i[0].value))
                         self.dict_values_factory.append(all_values)
@@ -597,6 +718,7 @@ class MainWindow(QMainWindow):
                 # print(self.data_costs['FACTORY 10'])
                 self.dictionary = dict(zip(self.keys,self.values))
                 self.dictionary_all_values = dict(zip(self.keys_for_dict, self.dict_values_factory))
+                print(self.dictionary_all_values)
                 # print(self.dictionary_all_values)
 
                 if self.flag_generate_factorys == True:
@@ -618,21 +740,28 @@ class MainWindow(QMainWindow):
            self.data_costs[self.option][i] = round(float(self.data_costs[self.option][i]), 1)#100 * (self.data_costs[self.option][i] / self.full_costs[self.option]), 1)
 
 
-        self.TableSorting(widgets.tableWidget, 'Des', 4)
+        self.TableSorting(widgets.tableWidget, 'Des', 5)
         # widget.sortItems(3, QtCore.Qt.AscendingOrder, 2, 5)
 
     def ForButtons(self, button,widget):
         self.array_keys = []
+
         self.option = button.objectName()
         if self.current_page == 'widgets':
+            for i in range(len(self.lablearray)):
+                self.lablearray[i].setText("")
+            self.lablearray[4].setText("Sort priority: 1")
+            self.reset_button_style()
+            self.sorting_design(widgets.button10)
             self.LoadExcel(widget)
+
         elif self.current_page == 'new':
             self.gl_view.clear()
             widgets.create_3d_pie_chart(self.data_costs[self.option], self.colors_chart, self.gl_view)
         self.Must_have()
         self.reset_selected_factory()
         widgets.btn_global.setStyleSheet((widgets.btn_global.styleSheet()).replace("background-color: rgb(29, 34, 38)", "") )
-        self.sorting_design(widgets.button8)
+
         style = button.styleSheet()
         button.setStyleSheet(style+ "\n"+"background-color: rgb(29, 34, 38)")
 
@@ -794,12 +923,12 @@ class MainWindow(QMainWindow):
             if factory_row != None:
                 for properties in self.another_dict[factory_row.text()]:
                     # print(properties)
-                    diff = (properties[1]-properties[2])
+                    diff = (properties[1]-properties[2]-properties[3])
                     if min_value <= diff < max_value:
                         if button_clicked_change:
-                            sum += round(properties[6] * diff, 1)
+                            sum += round(properties[7] * diff, 1)
                         else:
-                            sum -= round(properties[6] * diff, 1)
+                            sum -= round(properties[7] * diff, 1)
                 print(sum)
                 sum = round(sum,1)
                 if sum == 0:
@@ -810,10 +939,10 @@ class MainWindow(QMainWindow):
     def border_color_clicked(self, button, status):
         if status:
             style = button.styleSheet()
-            button.setStyleSheet(style + "border: 2px solid magenta")
+            button.setStyleSheet(style + "border: 3px solid white")
         else:
             style = button.styleSheet()
-            style = style.replace("border: 2px solid magenta", "")
+            style = style.replace("border: 3px solid white", "")
             button.setStyleSheet(style)
 
 
@@ -834,13 +963,16 @@ class MainWindow(QMainWindow):
     def Export_Rows(self):
         selectionModel = widgets.tableWidget.selectionModel()
         selectedRanges = selectionModel.selectedRows()
-
+        if selectedRanges==[]:
+            widgets.tableWidget.selectAll()
+            selectionModel = widgets.tableWidget.selectionModel()
+            selectedRanges = selectionModel.selectedRows()
         # Create a new workbook
         wb = openpyxl.Workbook()
 
         # Add a new worksheet
         ws = wb.active
-        h = ["Number", "Have to be", "Now we have", "Diff", "Diff up to 10"]
+        h = ["Number", "Have to be", "Now we have", "Ordered","To order", "To order up to 10", "Image"]
         # ws.append(h)
 
         # Create a progress dialog
@@ -851,7 +983,7 @@ class MainWindow(QMainWindow):
         progressDialog.setCancelButton(None)
         # Export the selected rows to Excel
         realrow = 1
-        for i in range (5):
+        for i in range (7):
             ws.cell(row=realrow, column=i + 1).fill =PatternFill(patternType='solid', fgColor=Color("538DD5"))
             ws.cell(row=realrow, column=i+1).value = h[i]
         realrow+=1
@@ -907,6 +1039,8 @@ class MainWindow(QMainWindow):
         item = widgets.tableWidget.item(row, 0)
         if item is not None and row != 0:
             widgets.plainTextEdit.setPlainText(str(self.dictionary[item.text()]))
+            print(self.dictionary_all_values[item.text()])
+            widgets.labelImage.setPixmap(self.dictionary_all_values[item.text()][8])
 
     def resizeEvent(self, event):
         # Update Size Grips

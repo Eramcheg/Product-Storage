@@ -1175,7 +1175,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.setStyleSheet(u"background: transparent;")
         self.home = QWidget()
         self.home.setObjectName(u"home")
-        self.home.setStyleSheet(u"background-image: url(images/images/logo_oliverweber.png);\n")
+        # self.home.setStyleSheet(u"background-image: url(images/images/logo_oliverweber.png);\n")
 # "background-position: center;\n"
 # "background-repeat: no-repeat;")
 
@@ -1184,6 +1184,12 @@ class Ui_MainWindow(object):
         self.verticalLayout111.setObjectName(u"verticalLayout111")
         self.verticalLayout111.setContentsMargins(10, 10, 10, 10)
         self.verticalLayout111.setAlignment(Qt.AlignCenter)
+        self.logo = QLabel()
+        self.logo.setFixedSize(500,154)
+        self.logo.setScaledContents(True)
+        self.logo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.logo.setStyleSheet(u"background-image: url(images/images/logo_oliverweber.png);\n")
+        self.verticalLayout111.addWidget(self.logo)
         self.widg = QWidget()
         self.lay = QVBoxLayout(self.widg)
         # self.inner_layout = QVBoxLayout(self.widg)
@@ -1194,6 +1200,31 @@ class Ui_MainWindow(object):
         self.label_auth.setStyleSheet("font-family: Arial; font-size: 26px;")
         self.label_auth.setGeometry(50, 50, 200, 30)
         self.label_auth.setAlignment(Qt.AlignCenter)
+
+
+        self.buttonTABLES = QPushButton('TABLES')
+        self.buttonPIE = QPushButton('FACTORIES')
+        self.buttonTABLES.setObjectName(u"tablesButton")
+        self.buttonTABLES.setMinimumSize(QSize(150, 100))
+        self.buttonTABLES.setFont(font)
+        self.buttonTABLES.setCursor(QCursor(Qt.PointingHandCursor))
+        self.buttonTABLES.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        icon4_ = QIcon()
+        icon4_.addFile(u"images/icons/cil-catalog.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.buttonTABLES.setIcon(icon4_)
+        self.buttonPIE.setObjectName(u"PIEbutton")
+        self.buttonPIE.setMinimumSize(QSize(150, 100))
+        self.buttonPIE.setFont(font)
+        self.buttonPIE.setCursor(QCursor(Qt.PointingHandCursor))
+        self.buttonPIE.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        icon_ = QIcon()
+        icon_.addFile(u"images/icons/cil-dollar.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.buttonPIE.setIcon(icon_)
+
+
+
         self.username_input = QLineEdit()
         self.username_input.setGeometry(100, 100, 100, 30)
         self.username_input.setObjectName(u"usernameEdit")
@@ -1225,6 +1256,8 @@ class Ui_MainWindow(object):
         self.labelPassword.setGeometry(50, 50, 200, 30)
         self.labelPassword.setAlignment(Qt.AlignCenter)
         self.lay.addWidget(self.label_auth)
+        self.lay.addWidget(self.buttonTABLES)
+        self.lay.addWidget(self.buttonPIE)
         self.lay.addWidget(self.labelLogin)
         self.lay.addWidget(self.username_input)
         self.lay.addWidget(self.labelPassword)
@@ -1235,6 +1268,15 @@ class Ui_MainWindow(object):
         self.widg.setFixedSize(500, 500)
 
         self.verticalLayout111.addWidget(self.widg)
+
+        # self.navigation_home_buttons = QWidget()
+        # self.layout_navigation = QHBoxLayout(self.navigation_home_buttons)
+
+
+        # self.layout_navigation.addWidget(self.buttonTABLES)
+        # self.layout_navigation.addWidget(self.buttonPIE)
+        # self.navigation_home_buttons.setLayout(self.layout_navigation)
+        # self.verticalLayout111.addWidget(self.navigation_home_buttons)
 
 
 
@@ -1407,6 +1449,10 @@ class Ui_MainWindow(object):
         self.plainTextEdit.setStyleSheet(u"background-color: rgb(33, 37, 43);")
 
         self.horizontalLayout_11.addWidget(self.plainTextEdit)
+        self.labelImage = QLabel()
+        self.labelImage.setAlignment(Qt.AlignmentFlag.AlignTop)  # Align the label to the top
+
+        self.horizontalLayout_11.addWidget(self.labelImage)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
@@ -1453,7 +1499,9 @@ class Ui_MainWindow(object):
         # self.gridLayout_2.addWidget(self.horizontalSlider, 2, 0, 1, 2)
         self.container1 = QWidget()
         layout = QHBoxLayout(self.container1)
-        self.label1 = QLabel()
+        layout.setAlignment(Qt.AlignRight )
+        # self.label01 = QLabel()
+        self.label1 = QLabel("")
         self.button1 = QPushButton()
         self.button2 = QPushButton()
 
@@ -1479,6 +1527,7 @@ class Ui_MainWindow(object):
         self.button2.setIconSize(QSize(18, 18))
         self.button1.setFlat(True)
         self.button2.setFlat(True)
+        # layout.addWidget(self.label01)
         layout.addWidget(self.label1)
         layout.addWidget(self.button1)
         layout.addWidget(self.button2)
@@ -1487,6 +1536,7 @@ class Ui_MainWindow(object):
 
         self.container2 = QWidget()
         layout = QHBoxLayout(self.container2)
+        layout.setAlignment(Qt.AlignRight)
         self.label2 = QLabel()
         self.button3 = QPushButton()
         self.button4 = QPushButton()
@@ -1512,6 +1562,7 @@ class Ui_MainWindow(object):
 
         self.container3 = QWidget()
         layout = QHBoxLayout(self.container3)
+        layout.setAlignment(Qt.AlignRight)
         self.label3 = QLabel()
         self.button5 = QPushButton()
         self.button6 = QPushButton()
@@ -1536,7 +1587,8 @@ class Ui_MainWindow(object):
         self.container3.setLayout(layout)
 
         self.container4 = QWidget()
-        layout = QHBoxLayout(self.container3)
+        layout = QHBoxLayout(self.container4)
+        layout.setAlignment(Qt.AlignRight)
         self.label4 = QLabel()
         self.button7 = QPushButton()
         self.button8 = QPushButton()
@@ -1562,6 +1614,7 @@ class Ui_MainWindow(object):
 
         self.container5 = QWidget()
         layout = QHBoxLayout(self.container5)
+        layout.setAlignment(Qt.AlignRight)
         self.label5 = QLabel()
         self.button9 = QPushButton()
         self.button10 = QPushButton()
@@ -1583,7 +1636,33 @@ class Ui_MainWindow(object):
         layout.addWidget(self.button9)
         layout.addWidget(self.button10)
         layout.setContentsMargins(0, 0, 0, 0)
+
         self.container5.setLayout(layout)
+        self.container6 = QWidget()
+        layout = QHBoxLayout(self.container6)
+        layout.setAlignment(Qt.AlignRight)
+        self.label6 = QLabel()
+        self.button11 = QPushButton()
+        self.button12 = QPushButton()
+        self.button11.setObjectName(u"AscButton6")
+        self.button11.setFixedSize(QSize(30, 30))
+        self.button11.setFont(font)
+        self.button11.setCursor(QCursor(Qt.PointingHandCursor))
+        self.button12.setObjectName(u"DescButton6")
+        self.button12.setFixedSize(QSize(30, 30))
+        self.button12.setFont(font)
+        self.button12.setCursor(QCursor(Qt.PointingHandCursor))
+        # self.pushButton.setStyleSheet(u"background-color: rgb(52, 59, 72);")
+        # self.pushButton.clicked.connect(self.on_button_clicked())
+        self.button11.setIcon(icon4_1)
+        self.button12.setIcon(icon4_2)
+        self.button11.setIconSize(QSize(18, 18))
+        self.button12.setIconSize(QSize(18, 18))
+        layout.addWidget(self.label6)
+        layout.addWidget(self.button11)
+        layout.addWidget(self.button12)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.container6.setLayout(layout)
 
         self.verticalLayout_19.addLayout(self.gridLayout_2)
 
@@ -1672,8 +1751,8 @@ class Ui_MainWindow(object):
 
 
         self.tableWidget = QTableWidget(self.row_3)
-        if (self.tableWidget.columnCount() < 5):
-            self.tableWidget.setColumnCount(5)
+        if (self.tableWidget.columnCount() < 6):
+            self.tableWidget.setColumnCount(6)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -1728,6 +1807,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setItem(0, 3, __qtablewidgetitem23)
         __qtablewidgetitem24 = QTableWidgetItem()
         self.tableWidget.setItem(0, 4, __qtablewidgetitem24)
+        __qtablewidgetitem25 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 5, __qtablewidgetitem25)
         self.tableWidget.setObjectName(u"tableWidget")
 
 
@@ -2259,6 +2340,8 @@ class Ui_MainWindow(object):
         self.tableWidget.setCellWidget(0, 2, self.container3)
         self.tableWidget.setCellWidget(0, 3, self.container4)
         self.tableWidget.setCellWidget(0, 4, self.container5)
+        self.tableWidget.setCellWidget(0, 5, self.container6)
+
         ___qtablewidgetitem20 = self.tableWidget.item(0, 0)
         ___qtablewidgetitem20.setText(QCoreApplication.translate("MainWindow", u"Number", None));
         ___qtablewidgetitem21 = self.tableWidget.item(0, 1)
@@ -2266,9 +2349,11 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem22 = self.tableWidget.item(0, 2)
         ___qtablewidgetitem22.setText(QCoreApplication.translate("MainWindow", u"Stock", None));
         ___qtablewidgetitem23 = self.tableWidget.item(0, 3)
-        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Diff", None));
+        ___qtablewidgetitem23.setText(QCoreApplication.translate("MainWindow", u"Ordered", None));
         ___qtablewidgetitem24 = self.tableWidget.item(0, 4)
-        ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"Diff up to 10", None));
+        ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"To order", None));
+        ___qtablewidgetitem25 = self.tableWidget.item(0, 5)
+        ___qtablewidgetitem25.setText(QCoreApplication.translate("MainWindow", u"To order up to 10", None));
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
 
